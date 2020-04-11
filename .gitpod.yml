@@ -1,0 +1,8 @@
+tasks:
+  - init: npm i -g heroku 
+    command: pip3 install -r requirements.txt
+ports:
+  - port: 8080
+    onOpen: open-browser
+image:
+  file: .gitpod.Dockerfile
