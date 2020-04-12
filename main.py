@@ -8,9 +8,9 @@ from models import db, Logs
 ''' Begin boilerplate code '''
 def create_app():
   app = Flask(__name__, static_url_path='')
-  app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+  app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://b4ab06921840a3:995a5935@us-cdbr-iron-east-01.cleardb.net/heroku_b2abbb44d079db0'
   app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-  app.config['SECRET_KEY'] = "MYSECRET"
+ ##app.config['SECRET_KEY'] = "MYSECRET"    
   CORS(app)
   db.init_app(app)
   return app
