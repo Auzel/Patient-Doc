@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from flask_jwt import JWT, jwt_required, current_identity
 from datetime import timedelta 
 
-from models import db, MedInstitution, User, Physician, Patient, MedHistory
+from models import db, Med_Institution, User, Physician, Patient, Med_History, Release_Form
 
 ''' Begin boilerplate code '''
 def create_app():
