@@ -3,7 +3,8 @@ db = SQLAlchemy()
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
 
-### comeback and update toDict methods
+### comeback and update toDict methods to include relationships
+
 class Med_Institution(db.Model):
     __tablename__='med_institution'
 
@@ -27,7 +28,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     fName = db.Column(db.String(20), nullable=False)
     lName = db.Column(db.String(20), nullable=False)
-    username=db.Column(db.String(20), nullable=False)
+    username=db.Column(db.String(20), nullable=False, unique=True)
     password=db.Column(db.String(20), nullable=False)
     date_of_birth=db.Column(db.DateTime, nullable=False)
     address=db.Column(db.String(50), nullable=False)
@@ -36,7 +37,7 @@ class User(db.Model):
 
     __mapper_args__ = {        
         'polymorphic_identity':'user',
-         'polymorphic_on':type
+        'polymorphic_on':type
     }
 
 
@@ -95,9 +96,8 @@ class Physician(User):
 class Patient(User):
     __tablename__='patient'
 
-    current_problem = db.Column(db.String(20), nullable=True)
-    current_treatment=db.Column(db.String(20), nullable=True)
-    med_History = db.relationship('Med_History', uselist=False)
+    
+    med_record = db.relationship('Med_Record', uselist=False)
     releases = db.relationship('Release_Form', lazy=True)
     physicians=db.relationship('Physician', secondary=physicians, lazy='subquery', backref=db.backref('patients', lazy=True))
 
@@ -108,25 +108,25 @@ class Patient(User):
 
     def toDict(self):
         return{
-            super().toDict().update({
-                'current_problem':self.current_problem,
-                'current_treatment':self.current_treatment
-            })   
+            super().toDict()
         }
 
-class Med_History(db.Model):
-    __tablename__='med_history'
+class Med_Record(db.Model):
+    __tablename__='med_record'
 
     id = db.Column(db.Integer, primary_key=True)    
-    description=db.Column(db.String(1000), nullable=True)
+    current_problem = db.Column(db.String(20), nullable=True)
+    current_treatment=db.Column(db.String(20), nullable=True)
+    history=db.Column(db.String(1000), nullable=True)
     patient_id=db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-    ##create new table for separate allergies since 
 
     def toDict(self):
         return{
             'id':self.id,
-            'description':self.description   
+            'history':self.history,
+            'current_problem':self.current_problem,
+            'current_treatment':self.current_treatment
         }
     
 class Release_Form(db.Model):
