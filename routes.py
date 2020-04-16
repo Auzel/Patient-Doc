@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template
+from flask import Blueprint, request, redirect, render_template
 from flask_jwt import jwt_required, current_identity
 
 ## consider when doctor or patient deleted, is it deleted from other tables
@@ -8,15 +8,54 @@ api = Blueprint('api', __name__)
 
 @api.route('/')
 def index():
-    return render_template('home.html')
+    link_1 = "/front_layout/login"
+    link_1name = "Login"
+    link_2 = "/front_layout/signup"
+    link_2name="Sign Up"
+    name ="Home"
+    return render_template('/front_layout/home.html', 
+    link_1=link_1, link_1name=link_1name, 
+    link_2=link_2, link_2name=link_2name,
+    name=name)
 
-@api.route('/signup')
+@api.route('/front_layout/signup')
 def signup():
-    pass ##return render_template('signup.html',form=form)
+    name="Sign up"
+    link_1 = "/front_layout/login"
+    link_1name = "Login"
+    ### get data and post to database...
+    return render_template('/front_layout/signup.html', 
+    link_1=link_1, link_1name=link_1name, name=name)
 
-@api.route('/login')
+@api.route('/front_layout/login')
 def login():
-    pass ##return render_template('login.html',form=form)
+    name="Login"
+    link_2 = "/front_layout/signup"
+    link_2name="Sign Up"
+    #if loged in:
+        #redirect.url('/')
+    return render_template('/front_layout/login.html',
+    link_2=link_2, link_2name=link_2name, name=name)
+
+@api.route('/users_layout/profile')
+def profile():
+    name="Profile"
+    users=None
+    return render_template('/users_layout/profile.html',name=name)
+
+@api.route('/users_layout/profile/<username>')
+## NOTE medical records link should only appear if user is valid, it appears now just for functionality.
+def user_profile(username):
+    link_1 = "/users_layout/medical_records" ##link should read /users_layout/profile/patients/<id>/medical_records to get userspecific data
+    link_1name = "Medical Records"
+    name="Profile"
+    users=None
+    #if username in ##users_list/database:
+        #users = User[username]
+    return render_template('/users_layout/profile.html',
+    link_1=link_1, link_1name=link_1name, 
+    name=name,users=users, username=username)
+
 
 @api.route('/users')
 def get_users():
@@ -30,6 +69,10 @@ def get_patients():
 @api.route('/patients/<id>')
 def get_patient(id):
     pass   ##   return render_template('profile.html',user=user)
+
+@api.route('/users_layout/medical_records')
+def get_medical_records_from():
+    return render_template('/users_layout/medical_records.html', name="Medical")
 
 @api.route('/patients/<id>/medical_records')
 def get_medical_records_from_patient(id):

@@ -1,0 +1,27 @@
+{% extends "users_layout/users_layout.html" %}
+{% block title %}Patient-Doc/MedRecord{% endblock %}
+{% block page %}Patient-Doc Confidentiality{% endblock %}
+
+
+{{ super() }}
+
+{% block content %}            
+    <table>
+        <thead>
+            <tr>
+                <th>PatientName</th>
+                <th>PatientId</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+        <!--for record in records
+            <tr>
+                <td>record.name</td>
+                <td>record.id</td>
+                <td>record.date</td>
+            </tr>
+        (%endfor)-->
+        </tbody>
+    </table>     
+{% endblock %}

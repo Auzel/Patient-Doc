@@ -1,0 +1,25 @@
+{% extends "users_layout/users_layout.html" %}
+{% block title %}Patient-Doc/HomePage{% endblock %}
+{% block page %}Patient-Doc Confidentiality{% endblock %}
+
+{{ super() }}
+
+{% block content %}
+    <!--Information to be edited according to the user model and according to what infor you want displayed.-->
+    <!--VISIT /users_layout/profile or /users_layout/profile/<username>  for visual layout-->
+    <div class="card">
+        <div class="card-body">
+            <h4>{{username}}</h4>
+            <hr>
+            {%if user%}
+            <p>{{user["fname"]}}</p>
+            <p>{{user["lname"]}}</p>
+            <p>{{user["date_of_birth"]}}</p>
+            <p>{{user["address"]}}</p>
+            {% else %}
+            <p>Invalid Username</p>
+            {% endif %}
+        </div>
+    </div>
+   
+{% endblock %}
