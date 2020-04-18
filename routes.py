@@ -18,12 +18,16 @@ def index():
     link_2=link_2, link_2name=link_2name,
     name=name)
 
-@api.route('/front_layout/signup')
+@api.route('/front_layout/signup', methods=['Get', 'POST'])
 def signup():
     name="Sign up"
     link_1 = "/front_layout/login"
     link_1name = "Login"
-    ### get data and post to database...
+    ### get data and post to database...todo
+    if request.method == 'POST':
+        req=request.form
+        print(req.get('fname'))
+        return redirect(request.url)
     return render_template('/front_layout/signup.html', 
     link_1=link_1, link_1name=link_1name, name=name)
 
@@ -32,8 +36,20 @@ def login():
     name="Login"
     link_2 = "/front_layout/signup"
     link_2name="Sign Up"
-    #if loged in:
-        #redirect.url('/')
+    #Uncomment the following code then go to the login page and see how the app behaves(it assumes that tom is logged in)
+    ##when logged in he is redirected to the user-specific page where he can now view his profile/latest medical report or medical reports
+    """if request.method == 'GET':
+        #req=request.form
+        name="Home"
+        username = "tom"
+        link_1 = f"/users_layout/profile/{username}"
+        link_1name = "Profile"
+        link_2 = "/users_layout/medical_records"
+        link_2name="Medical Record"
+        return render_template('/front_layout/home.html',
+        link_1=link_1, link_1name=link_1name, 
+        link_2=link_2, link_2name=link_2name,
+        name=name)"""
     return render_template('/front_layout/login.html',
     link_2=link_2, link_2name=link_2name, name=name)
 
