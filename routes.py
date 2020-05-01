@@ -17,7 +17,7 @@ import datetime
 api = Blueprint('api', __name__)
 
 
-@api.route('/', methods=['GET', 'POST'])
+@api.route('/')
 def index():
     user=None
     if current_user.is_authenticated:
