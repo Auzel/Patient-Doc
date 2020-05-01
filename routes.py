@@ -1,65 +1,78 @@
-from flask import Blueprint, request, redirect, render_template
-from flask_jwt import jwt_required, current_identity
+from flask import Blueprint, request, redirect, render_template, flash, url_for
+#from flask_jwt import jwt_required, current_identity
+from flask_login import current_user, login_user, logout_user, login_required
+from sqlalchemy.exc import IntegrityError
+from models import db, Med_Institution, User, Physician, Patient, Appointment, Med_Record, Release_Form
+from werkzeug.security import generate_password_hash, check_password_hash
 
+import datetime
 ## consider when doctor or patient deleted, is it deleted from other tables
 ## do routes for ? queries
 ## account for status codes
+
+##remember to configure flash cards
+
+
+
 api = Blueprint('api', __name__)
 
-@api.route('/')
+
+@api.route('/', methods=['GET', 'POST'])
 def index():
-    link_1 = "/front_layout/login"
-    link_1name = "Login"
-    link_2 = "/front_layout/signup"
-    link_2name="Sign Up"
-    name ="Home"
-    return render_template('/front_layout/home.html', 
-    link_1=link_1, link_1name=link_1name, 
-    link_2=link_2, link_2name=link_2name,
-    name=name)
+    user=None
+    if current_user.is_authenticated:
+        if current_user.type == 'patient':
+            user=Patient.query.filter_by(username = current_user.username).first()
+        elif current_user.type == 'physician':
+            user=Physician.query.filter_by(username = current_user.username).first()
+        else:        
+            print("error")
+    
+    ## send patient or physician to home page
+    return render_template('/front_layout/home.html', user=user) 
 
-@api.route('/front_layout/signup')
+@api.route('/signup', methods=['GET', 'POST'])
 def signup():
-    name="Sign up"
-    link_1 = "/front_layout/login"
-    link_1name = "Login"
-    ### get data and post to database...
-    return render_template('/front_layout/signup.html', 
-    link_1=link_1, link_1name=link_1name, name=name)
+    ### Need to make slight change for physician
+    if request.method == 'POST':     
+        data=request.form
+        DOB = datetime.datetime.strptime(data['DOB'],"%Y-%m-%d")
+        patient = Patient(fname = data['fname'], lname=data['lname'], username=data['uname'], date_of_birth=DOB, address=data['address'], email=data['email']) # create user object
+        patient.set_password(data['password']) # set password
+        try:
+            db.session.add(patient) # save new user
+            db.session.commit()
+        except IntegrityError as e : # attempted to insert a duplicate user
+            print('problem: ',e)
+            db.session.rollback()
+            flash('username or email already exists')
+            return redirect(url_for('.signup'))
+        flash('Account Created!')
+        return render_template('/front_layout/login.html')        
+    return render_template('/front_layout/signup.html')
 
-@api.route('/front_layout/login')
+
+@api.route('/login', methods=['GET', 'POST'])
 def login():
-    name="Login"
-    link_2 = "/front_layout/signup"
-    link_2name="Sign Up"
-    #if loged in:
-        #redirect.url('/')
-    return render_template('/front_layout/login.html',
-    link_2=link_2, link_2name=link_2name, name=name)
+  
+    ##when logged in he is redirected to the user-specific page where he can now view his profile/latest medical report or medical reports
+    if request.method == 'POST':
+        data = request.form
+        user = User.query.filter_by(username = data['username']).first()
 
-@api.route('/users_layout/profile')
-def profile():
-    name="Profile"
-    users=None
-    return render_template('/users_layout/profile.html',name=name)
-
-@api.route('/users_layout/profile/<username>')
-## NOTE medical records link should only appear if user is valid, it appears now just for functionality.
-def user_profile(username):
-    link_1 = "/users_layout/medical_records" ##link should read /users_layout/profile/patients/<id>/medical_records to get userspecific data
-    link_1name = "Medical Records"
-    name="Profile"
-    users=None
-    #if username in ##users_list/database:
-        #users = User[username]
-    return render_template('/users_layout/profile.html',
-    link_1=link_1, link_1name=link_1name, 
-    name=name,users=users, username=username)
+        if user and user.check_password(data['password']):
+            login_user(user)
+            flash('Logged in successfully.') 
+            return redirect(url_for('.index'))
+        flash('Invalid username or password') # send message to next page 
+    return render_template('/front_layout/login.html')
 
 
 @api.route('/users')
 def get_users():
-    pass ##return render_template('users_list.html',users=users)
+    name="Profile"
+    users=None ##change
+    return render_template('users_list.html',users=users)
 
 @api.route('/patients')
 def get_patients():
@@ -68,6 +81,10 @@ def get_patients():
 
 @api.route('/patients/<id>')
 def get_patient(id):
+    #if username in ##users_list/database:
+        #users = User[username]
+    user=None
+    return render_template('/users_layout/profile.html', user=user)
     pass   ##   return render_template('profile.html',user=user)
 
 @api.route('/users_layout/medical_records')

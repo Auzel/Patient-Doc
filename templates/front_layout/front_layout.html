@@ -1,9 +1,9 @@
 <!doctype html>
 <html>
   <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     
-  
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
      <!--Import Google Icon Font-->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Compiled and minified CSS -->
@@ -20,13 +20,19 @@
   <nav>
     <div class="nav-wrapper mb-3" >
       <a href="/" class="brand-logo">Patient-Doctor</a>
+      <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
       <ul id="nav-mobile" class="right hide-on-med-and-down">
-        <li><a href="{{link_1}}">{{link_1name}}</a></li>
-        <li><a href="{{link_2}}">{{link_2name}}</a></li>
-        <li><a href="{{link_3}}">{{link_3name}}</a></li>
+        <li><a href="login">Login</a></li>
+        <li><a href="signup">Sign Up</a></li>
+      <!--  <li><a href="{{link_3}}">{{link_3name}}</a></li> -->
       </ul>
     </div>
   </nav>
+   <ul id="slide-out" class="sidenav">
+        <li><a href="login">Login </a></li>
+        <li><a href="signup">Sign Up</a></li>
+       <!--- <li><a href="{{link_3}}">{{link_3name}}</a></li> -->
+      </ul>
 
     <main>
         <!--{% block main%}-->
@@ -34,9 +40,11 @@
                 <div class="ro">
                     <div class="col">
                         <h1>{{name}}</h1>
+                        <h2>{% block page %} {% endblock %}</h2>
                         <hr>
                         {% block content %}
                         {% endblock %}
+                       
                     </div>
                 </div>
             </div>
@@ -45,5 +53,9 @@
      
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+    const slide_menu=document.querySelectorAll(".sidenav");
+    M.Sidenav.init(slide_menu, {});
+    </script>
   </body>
 </html>

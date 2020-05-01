@@ -1,35 +1,33 @@
 {% extends "front_layout/front_layout.html" %}
-{% block title %}Patient-Doc/Sign Up{% endblock %}
+{% block title %}Patient-Doc Sign Up{% endblock %}
 {% block page %}Patient-Doc Confidentiality{% endblock %}
 
 
-{{ super() }}
-
 {% block content %}
-    <form action="/signup" method="POST">
+    <form action="signup" method="POST">
         <div class="form-group">
             <label>Firstname</label>
-            <input class="form-control" type="text" name="Patient's First Name">
+            <input class="form-control" type="text" name="fname">
         </div>
 
         <div class="form-group">
             <label>Lastname</label>
-            <input class="form-control" type="text" name="Patient's Last Name">
+            <input class="form-control" type="text" name="lname">
         </div>
 
         <div class="form-group">
             <label>Username</label>
-            <input class="form-control" type="text" name="Username">
+            <input class="form-control" type="text" name="uname">
         </div>
 
         <div class="form-group">
             <label>Date Of Birth</label>
-            <input class="form-control" type="date" name="Patient's DOB">
+            <input class="form-control" type="date" name="DOB">
         </div>
 
         <div class="form-group">
             <label>Address</label>
-            <input class="form-control" type="address" name="Patient's Address">
+            <input class="form-control" type="address" name="address">
         </div>
 
         <div class="form-group">

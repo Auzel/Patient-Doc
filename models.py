@@ -1,54 +1,39 @@
 from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
+from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
 
 ### comeback and update toDict methods to include relationships
 
-class Med_Institution(db.Model):
-    __tablename__='med_institution'
-
-    id = db.Column(db.Integer, primary_key=True)
-    address = db.Column(db.String(50), nullable=False)
-    name = db.Column(db.String(20), nullable=False)
-    physician = db.relationship('Physician', backref='med_institution', lazy=True)
-
-    def toDict(self):
-        return{
-            'id':self.id,
-            'address':self.address,
-            'name':self.name
-        }
-        
-
-
-class User(db.Model):
+class User(UserMixin, db.Model):
     __tablename__='user'
 
     id = db.Column(db.Integer, primary_key=True)
-    fName = db.Column(db.String(20), nullable=False)
-    lName = db.Column(db.String(20), nullable=False)
+    fname = db.Column(db.String(20), nullable=False)
+    lname = db.Column(db.String(20), nullable=False)
     username=db.Column(db.String(20), nullable=False, unique=True)
-    password=db.Column(db.String(20), nullable=False)
-    date_of_birth=db.Column(db.DateTime, nullable=False)
+    password=db.Column(db.String(80), nullable=False)
+    date_of_birth=db.Column(db.Date, nullable=False)
     address=db.Column(db.String(50), nullable=False)
+    email= db.Column(db.String(50), nullable=False, unique=True)
     
     type = db.Column(db.String(50))
 
     __mapper_args__ = {        
-        'polymorphic_identity':'user',
-        'polymorphic_on':type
+        'polymorphic_on':type,
+        'polymorphic_identity':'user'
     }
 
 
     def toDict(self):
         return{
             'id': self.id,
-            'fName': self.fName,
-            'lName': self.lName,
+            'fname': self.fname,
+            'lname': self.lname,
             'username': self.username,
             'password': self.password,            
-            'date_of_birth': self.date_of_birth.strftime("%m/%d/%Y, %H:%M:%S"),
+            'date_of_birth': self.date_of_birth.strftime("%d/%B/%Y"),
             'address': self.address
         }
 
@@ -66,18 +51,34 @@ class User(db.Model):
     ##finish authentication
 
 
-physicians=db.Table('physicians',db.Column('physician_id', db.Integer, db.ForeignKey('user.id'), primary_key=True), db.Column('patient_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)) 
 
 
+class Patient(User):
+    ##__tablename__='patient'
+
+    
+    med_record = db.relationship('Med_Record', uselist=False)
+    releases = db.relationship('Release_Form', foreign_keys="Release_Form.patient_id",  lazy=True)    
+    physicians = db.relationship('Appointment', foreign_keys="Appointment.patient_id", backref='patient', lazy=True)
+        
+    __mapper_args__ = {
+        'polymorphic_identity':'patient'
+    }
+
+
+    def toDict(self):
+        return super().toDict()
+        
 class Physician(User):
-    __tablename__='physician'
+    ##__tablename__='physician'
 
     type1= db.Column(db.String(20), nullable=False)
     degree=db.Column(db.String(20), nullable=False)
     place_of_education=db.Column(db.String(20), nullable=False)
-    med_id=db.Column(db.Integer, db.ForeignKey('med_institution.id'), nullable=False)
-    releases=db.relationship('Release_Form', backref='physician', lazy=True)
-
+    med_id=db.Column(db.Integer, db.ForeignKey('med_institution.id'))
+    releases=db.relationship('Release_Form', foreign_keys="Release_Form.physician_id", backref='physician', lazy=True)    
+    patients = db.relationship('Appointment', foreign_keys="Appointment.physician_id", backref='physician', lazy=True)##, back_populates="physicians")
+    
     __mapper_args__ = {
         'polymorphic_identity':'physician'
     }
@@ -85,31 +86,39 @@ class Physician(User):
     ##appointment date scheduling
 
     def toDict(self):
-        return{
-            super().toDict().update({
+        return  super().toDict().update({
                 'type1':self.type1,
                 'degree':self.degree,
                 'place_of_education':self.place_of_education
             })   
-        }
 
-class Patient(User):
-    __tablename__='patient'
 
+class Appointment(db.Model):
+    physician_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    patient_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True) 
+    date=db.Column(db.DateTime, primary_key=True, default=datetime.datetime.utcnow())    
     
-    med_record = db.relationship('Med_Record', uselist=False)
-    releases = db.relationship('Release_Form', lazy=True)
-    physicians=db.relationship('Physician', secondary=physicians, lazy='subquery', backref=db.backref('patients', lazy=True))
+    def toDict(self):
+        return {
+            'date': self.date.strftime("%d/%B/%Y, %H:%M:%S") 
+        }
+ 
 
-    __mapper_args__ = {
-        'polymorphic_identity':'patient'
-    }
+class Med_Institution(db.Model):
+    __tablename__='med_institution'
 
+    id = db.Column(db.Integer, primary_key=True)
+    address = db.Column(db.String(50), nullable=False)
+    name = db.Column(db.String(20), nullable=False)
+    physician = db.relationship('Physician', backref='med_institution', lazy=True)
 
     def toDict(self):
         return{
-            super().toDict()
+            'id':self.id,
+            'address':self.address,
+            'name':self.name
         }
+               
 
 class Med_Record(db.Model):
     __tablename__='med_record'
@@ -133,7 +142,7 @@ class Release_Form(db.Model):
     __tablename__='release_form'
 
     id = db.Column(db.Integer, primary_key=True) 
-    date=db.Column(db.DateTime, nullable=False)   
+    date=db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow())   
     patient_id = db.Column(db.Integer, db.ForeignKey('user.id'),nullable=False) ##foreign key
     physician_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
      
@@ -141,5 +150,5 @@ class Release_Form(db.Model):
     def toDict(self):
         return {
             'id':self.id,
-            'date': self.date("%m/%d/%Y, %H:%M:%S")         
+            'date': self.date.strftime("%d/%B/%Y, %H:%M:%S")         
         }
