@@ -27,6 +27,7 @@ def create_app():
   app.config['SECRET_KEY'] = 'P@T|nt-D0CT0R@App'    
   #app.config['JWT_EXPIRATION_DELTA'] = timedelta(days = 1)   
   login_manager.init_app(app)
+  ##login_manager.login_view = 'app.login'   
   CORS(app)
   db.init_app(app)
   return app

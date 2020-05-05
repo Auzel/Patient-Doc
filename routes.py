@@ -19,16 +19,8 @@ api = Blueprint('api', __name__)
 
 @api.route('/')
 def index():
-    user=None
     if current_user.is_authenticated:
-        if current_user.type == 'patient':
-            user=Patient.query.filter_by(username = current_user.username).first()
-        elif current_user.type == 'physician':
-            user=Physician.query.filter_by(username = current_user.username).first()
-        else:        
-            print("error")
-    
-    ## send patient or physician to home page
+        user=current_user
     return render_template('/front_layout/home.html', user=user) 
 
 @api.route('/signup', methods=['GET', 'POST'])
@@ -37,10 +29,19 @@ def signup():
     if request.method == 'POST':     
         data=request.form
         DOB = datetime.datetime.strptime(data['DOB'],"%Y-%m-%d")
-        patient = Patient(fname = data['fname'], lname=data['lname'], username=data['uname'], date_of_birth=DOB, address=data['address'], email=data['email']) # create user object
-        patient.set_password(data['password']) # set password
+        type = data['type']
+        if type=='patient':
+            user = Patient(fname = data['fname'], lname=data['lname'], username=data['uname'], date_of_birth=DOB, 
+                      address=data['address'], email=data['email']) # create user object
+            user.set_password(data['password']) # set password
+        elif type=='physician':
+            user = Patient(fname = data['fname'], lname=data['lname'], username=data['uname'], date_of_birth=DOB, 
+                        address=data['address'], email=data['email']) ## add other physician fields
+        else:
+            print('error')                        
+
         try:
-            db.session.add(patient) # save new user
+            db.session.add(user) # save new user
             db.session.commit()
         except IntegrityError as e : # attempted to insert a duplicate user
             print('problem: ',e)
@@ -54,11 +55,10 @@ def signup():
 
 @api.route('/login', methods=['GET', 'POST'])
 def login():
-  
     ##when logged in he is redirected to the user-specific page where he can now view his profile/latest medical report or medical reports
     if request.method == 'POST':
         data = request.form
-        user = User.query.filter_by(username = data['username']).first()
+        user = User.query.get(data['username'])
 
         if user and user.check_password(data['password']):
             login_user(user)
@@ -67,72 +67,115 @@ def login():
         flash('Invalid username or password') # send message to next page 
     return render_template('/front_layout/login.html')
 
-
-@api.route('/users')
-def get_users():
-    name="Profile"
-    users=None ##change
-    return render_template('users_list.html',users=users)
-
-@api.route('/patients')
-def get_patients():
-    pass##  return render_template('users_list.html',users=users)
+@api.route('/logout')
+@login_required
+def logout():
+    logout_user(current_user)
+    redirect(url_for('.index'))
 
 
-@api.route('/patients/<id>')
-def get_patient(id):
-    #if username in ##users_list/database:
-        #users = User[username]
-    user=None
-    return render_template('/users_layout/profile.html', user=user)
-    pass   ##   return render_template('profile.html',user=user)
+#NOTE to Shaquille - username is used to refer to patient username and uname is used to refer to physician username
 
-@api.route('/users_layout/medical_records')
-def get_medical_records_from():
-    return render_template('/users_layout/medical_records.html', name="Medical")
+@api.route('/patients/<username>')
+@api.route('/physicians/<uname>/patients/<username>')
+@login_required
+def get_patient(username,uname):
 
-@api.route('/patients/<id>/medical_records')
-def get_medical_records_from_patient(id):
-    pass ##return render_template('medical_records.html',medical_records=medical_records)
+    if (current_user.username==username and current_user.type=='patient'):
+        patient=Patient.query.get(username)
+    elif current_user.username==uname and current_user.type=='physician':
+        appointment=Appointment.query.filter(physician_username=uname, patient_username=username).first()
+        if appointment:
+            patient=appointment.patient
+    return render_template('/users_layout/profile.html', user=patient)
 
 
-@api.route('/patients/<id>/medical_records/<mid>')
-def get_medical_record_from_patient(id,mid):
-    pass ##return render_template('medical_record.html',medical_record=medical_record)
+@api.route('/patients/<username>/medical_record')
+@api.route('/physicians/<uname>/patients/<username>/medical_record')
+@login_required
+def get_medical_record(username,uname):
 
-@api.route('/patients/<id>/physicians')
-def get_patient_physicians(id):
-    pass ##return render_template('users_list.html',users=users) 
+    if current_user.username==username and current_user.type=='patient':
+        patient=Patient.query.get(username)
+    elif current_user.username==uname and current_user.type=='physician':
+        appointment=Appointment.query.filter(physician_username=uname, patient_username=username).first()
+        if appointment:
+            med_record = appointment.patient.med_record        
+    return render_template('/users_layout/medical_record.html',med_record=med_record, username=username)  # do logic and check if med_records
 
-@api.route('/patients/<id>/physicians/<pid>')
-def get_patient_physician(id,pid):
-    pass #return render_template('profile.html',user=user) 
-  
+
+@api.route('/patients/<username>/appointment/<date>')
+@api.route('/physicians/<uname>/patients/<username>/appointment/<date>')
+@login_required
+def get_appointment(username,uname,date):
+    date = datetime.datetime.strptime(date,"%d-%m-%Y")
+    if (current_user.username==username and current_user.type=='patient') or (current_user.username==uname and current_user.type=='physician'):
+        appointment=Appointment.query.filter_by(physician_username=uname, patient_username=username,date=date).first()
+
+    return render_template('/users_layout/appointment.html',appointment=appointment)
+
+@api.route('/patients/<username>/appointments>')
+@login_required
+def get_patient_appointments(username):
+    if current_user.username==username and current_user.type=='patient':
+        appointments = Patient.get(username).appointments
+    return render_template('/users_layout/appointment_list.html',appointment=appointments)
+
+
+@api.route('/physicians/<uname>/appointments')
+@login_required
+def get_physician_appointment(uname):
+    if current_user.username==uname and current_user.type=='physician':
+        appointments = Physician.get(uname).appointments
+    return render_template('/users_layout/appointment_list.html',appointment=appointments)
+
+
+@api.route('/patients/<username>/physicians')
+@login_required
+def get_patient_physicians(username):
+    physicians=[]
+    used=set()
+    if current_user.username==username and current_user.type=='patient':
+        appointments = Patient.get(username).appointments
+        for appointment in appointments:
+            if not appointment.physician_username in used:
+                used.add(appointment.physician_username)
+                physicians.append(appointment.physician)
+    return render_template('/users_layout/users_list.html',users=physicians) 
 
 
 @api.route('/physicians')
 def get_physicians():
-    pass## return render_template('users_list.html',users=users)
+    physicians=Physician.query.all()
+    return render_template('/users_layout/users_list.html',users=physicians)
 
-@api.route('/physicians/<pid>')
-def get_physician(pid):
-    pass ##return render_template('profile.html', user=user)
+@api.route('/physicians/<uname>')
+def get_physician(uname):    
+    physician = Physician.query.filter_by(username = uname).first()
+    return render_template('/users_layout/profile.html', user=physician)
 
-@api.route('/physicians/<pid>/patients')
-def get_physician_patients(pid):
-    pass    ##return render_template('users_list.html',users=users)
+@api.route('/physicians/<uname>/patients')
+@login_required
+def get_physician_patients(uname):
+    patients=[]
+    used=set()
+    if current_user.username==uname and current_user.type=='physician':
+        appointments = Physician.get(uname).appointments
+        for appointment in appointments:
+            if not appointment.patient_username in used:
+                used.add(appointment.patient_username)
+                patients.append(appointment.patient)
+    return render_template('/users_layout/users_list.html',users=patients)
 
-@api.route('/physicians/<pid>/patients/<id>')
-def get_physician_patient(pid, id):
-    pass ##return render_template('users_list.html',user=user) 
+@api.route('/med_instutitions')
+def get_med_institutions():
+    med_institutions = Med_Institution.query.all()
+    return render_template('/users_layout/med_institution_list.html',med_institutions=med_institutions)
 
-@api.route('/physicians/<pid>/patients/<id>/medical_records')
-def get_medical_records_from_physician(pid,id):
-    pass ##return render_template('medical_records.html',medical_records=medical_records)
-
-@api.route('/physicians/<pid>/patients/<id>/medical_records<mid>')
-def get_medical_record_from_physician(id,pid,mid):
-    pass ##return render_template('medical_record.html',medical_record=medical_record) 
+@api.route('/med_instutitions/<id>')
+def get_med_institutions(id):
+    med_institution = Med_Institution.query.get(id)
+    return render_template('/users_layout/med_institution.html',med_institution=med_institution)
 
 @api.errorhandler(404)
 def page_not_found(e):
