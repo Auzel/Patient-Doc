@@ -45,6 +45,9 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
+    
+    def get_id(self):
+        return self.username
 
     ##finish authentication
 
@@ -56,8 +59,8 @@ class Patient(User):
 
     
     med_record = db.relationship('Med_Record', uselist=False, backref='patient')
-    releases = db.relationship('Release_Form', foreign_keys="Release_Form.patient_id",  lazy=True)    
-    appointments = db.relationship('Appointment', foreign_keys="Appointment.patient_id", backref='patient', lazy=True)
+    releases = db.relationship('Release_Form', foreign_keys="Release_Form.patient_username",  lazy=True)    
+    appointments = db.relationship('Appointment', foreign_keys="Appointment.patient_username", backref='patient', lazy=True)
         
     __mapper_args__ = {
         'polymorphic_identity':'patient'
@@ -74,8 +77,8 @@ class Physician(User):
     degree=db.Column(db.String(20), nullable=False)
     place_of_education=db.Column(db.String(20), nullable=False)
     med_id=db.Column(db.Integer, db.ForeignKey('med_institution.id'))
-    releases=db.relationship('Release_Form', foreign_keys="Release_Form.physician_id", backref='physician', lazy=True)    
-    appointments = db.relationship('Appointment', foreign_keys="Appointment.physician_id", backref='physician', lazy=True)##, back_populates="physicians")
+    releases=db.relationship('Release_Form', foreign_keys="Release_Form.physician_username", backref='physician', lazy=True)    
+    appointments = db.relationship('Appointment', foreign_keys="Appointment.physician_username", backref='physician', lazy=True)##, back_populates="physicians")
     
     __mapper_args__ = {
         'polymorphic_identity':'physician'
@@ -92,8 +95,8 @@ class Physician(User):
 
 
 class Appointment(db.Model):
-    physician_username = db.Column(db.Integer, db.ForeignKey('user.username'), primary_key=True)
-    patient_username = db.Column(db.Integer, db.ForeignKey('user.username'), primary_key=True) 
+    physician_username = db.Column(db.String(20), db.ForeignKey('user.username'), primary_key=True)
+    patient_username = db.Column(db.String(20), db.ForeignKey('user.username'), primary_key=True) 
     date=db.Column(db.DateTime, primary_key=True, default=datetime.datetime.utcnow())    
     
     def toDict(self):
@@ -125,7 +128,7 @@ class Med_Record(db.Model):
     current_problem = db.Column(db.String(20), nullable=True)
     current_treatment=db.Column(db.String(20), nullable=True)
     history=db.Column(db.String(1000), nullable=True)
-    patient_username=db.Column(db.Integer, db.ForeignKey('user.username'), nullable=False)
+    patient_username=db.Column(db.String(20), db.ForeignKey('user.username'), nullable=False)
 
 
     def toDict(self):
@@ -141,8 +144,8 @@ class Release_Form(db.Model):
 
     id = db.Column(db.Integer, primary_key=True) 
     date=db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow())   
-    patient_username = db.Column(db.Integer, db.ForeignKey('user.username'),nullable=False) ##foreign key
-    physician_username = db.Column(db.Integer, db.ForeignKey('user.username'), nullable=False)
+    patient_username = db.Column(db.String(20), db.ForeignKey('user.username'),nullable=False) ##foreign key
+    physician_username = db.Column(db.String(20), db.ForeignKey('user.username'), nullable=False)
      
 
     def toDict(self):
