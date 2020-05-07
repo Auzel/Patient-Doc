@@ -299,13 +299,13 @@ def get_patient_physicians(username):
             if not appointment.physician_username in used:
                 used.add(appointment.physician_username)
                 physicians.append(appointment.physician)
-    return render_template('/users_layout/users_list.html',users=physicians) 
+    return render_template('/users_layout/users_list.html',users=physicians, title='My Physicians') 
 
 
 @api.route('/physicians')
 def get_physicians():
     physicians=Physician.query.all()
-    return render_template('/users_layout/users_list.html',users=physicians)
+    return render_template('/users_layout/users_list.html',users=physicians, title="Physicians Listing")
 
 @api.route('/physicians/<uname>')
 def get_physician(uname):    
@@ -323,14 +323,14 @@ def get_physician_patients(uname):
             if not appointment.patient_username in used:
                 used.add(appointment.patient_username)
                 patients.append(appointment.patient)
-    return render_template('/users_layout/users_list.html',users=patients)
+    return render_template('/users_layout/users_list.html',users=patients, title='My Patients')
 
-@api.route('/med_instutitions')
+@api.route('/med_institutions')
 def get_med_institutions():
     med_institutions = Med_Institution.query.all()
     return render_template('/users_layout/med_institution_list.html',med_institutions=med_institutions)
 
-@api.route('/med_instutitions/<id>')
+@api.route('/med_institutions/<id>')
 def get_med_institution(id):
     med_institution = Med_Institution.query.get(id)
     return render_template('/users_layout/med_institution.html',med_institution=med_institution)
@@ -365,6 +365,10 @@ def remove_release(id):
         return url_for('.get_releases')
     else:
         return redirect(url_for('/unauthorize'))
+
+@api.route('/about')
+def get_about():
+    return render_template('/front_layout/about.html')
 
 @api.route('/unauthorize')
 def unauthorize():

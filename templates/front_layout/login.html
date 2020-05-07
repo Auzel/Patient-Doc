@@ -1,20 +1,42 @@
 {% extends "front_layout/front_layout.html" %}
-{% block title %}Patient-Doc Login{% endblock %}
-{% block page %}Patient-Doc Confidentiality{% endblock %}
+{% block title %}| Login{% endblock %}
+
 
 {% block content %}
-    <form action="login" method="POST">
-        <div class="form-group">
-            <label>Username</label>
-            <input class="form-control" type="text" name="username">
-        </div>
 
-        <div class="form-group">
-            <label>Password</label>
-            <input class="form-control" type="password" name="password">
+<div class="container-fluid bg">
+    <div class="row">
+        <div class="col-md-4 col-sm-4 col-xs-12"></div>
+        <div class="col-md-4 col-sm-4 col-xs-12">
+            <!--form start-->   
+            <form class="form-container"  action="login" method="POST">
+                <h1>Log In</h1>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Username</label>
+                    <input type="text" name="username"  class="form-control" id="exampleInputEmail1" placeholder="Username">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Password</label>
+                    <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox"> Remember Me 
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-success btn-block">Log In</button>
+            </form>  
+            <!--form end-->
         </div>
+        <div class="col-md-4 col-sm-4 col-xs-12"></div>
+    </div>
+</div>
 
-        <button type="submit" class="btn btn-primary">Log In</button>
-    </form>   
+       
+  
 {% endblock %}
 
+
+  
+   
+   
