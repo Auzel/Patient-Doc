@@ -21,7 +21,6 @@ api = Blueprint('api', __name__)
 def index():
     user=None
     if current_user.is_authenticated:
-        print('hi')
         user=current_user
     return render_template('/front_layout/home.html', user=user) 
 
@@ -32,6 +31,7 @@ def signup():
         data=request.form
         DOB = datetime.datetime.strptime(data['DOB'],"%Y-%m-%d")
         type = data['type']
+        
         if type=='patient':
             user = Patient(fname = data['fname'], lname=data['lname'], username=data['uname'], date_of_birth=DOB, 
                       address=data['address'], email=data['email']) # create user object

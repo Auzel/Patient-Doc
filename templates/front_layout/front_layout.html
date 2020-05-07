@@ -1,61 +1,95 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    
-     <!--Import Google Icon Font-->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <!--Let browser know website is optimized for mobile-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="https://bootswatch.com/4/cyborg/bootstrap.min.css">
-    <title>{% block title %}{% endblock %}</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Patient-Doc {% block title %} {% endblock %}</title>
+    <link rel="icon" href="../../img/logohead.png">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<script src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+	<link rel="stylesheet" href="../../static/style.css">
 
-  </head>
-  <body>
+</head>
+
+<body>
     
-  <nav>
-    <div class="nav-wrapper mb-3" >
-      <a href="/" class="brand-logo">Patient-Doctor</a>
-      <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-      <ul id="nav-mobile" class="right hide-on-med-and-down">
-        <li><a href="login">Login</a></li>
-        <li><a href="signup">Sign Up</a></li>
-      <!--  <li><a href="{{link_3}}">{{link_3name}}</a></li> -->
-      </ul>
-    </div>
-  </nav>
-   <ul id="slide-out" class="sidenav">
-        <li><a href="login">Login </a></li>
-        <li><a href="signup">Sign Up</a></li>
-       <!--- <li><a href="{{link_3}}">{{link_3name}}</a></li> -->
-      </ul>
+  <!-- Navigation -->
+    <nav class="navbar navbar-expand-md navbar-light bg-light sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><img src="../../img/logo.png"></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive">
+                <span class="navbar-toggler-icon"></span>
+            </button>    
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">SignUp</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Institutions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">About Us</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
     <main>
-        <!--{% block main%}-->
-             <div class="container">
-                <div class="ro">
-                    <div class="col">
-                        <h1>{{name}}</h1>
-                        <h2>{% block page %} {% endblock %}</h2>
-                        <hr>
-                        {% block content %}
-                        {% endblock %}
-                       
-                    </div>
-                </div>
-            </div>
-        <!--{%endblock%} -->
+        {% block content %}
+
+        {% endblock %} 
     </main>
      
+    <!--- Footer -->
+    <footer>
+    <div class="container-fluid padding">
+    <div class="row text-center">
+        <div class="col-md-4">
+        <img src="../../img/footerlogo.png">
+        <hr class="light">
+        <p>555-555-5555</p>
+        <p>email@myemail.com</p>
+        <p>100 Street Name</p>
+        <p>City, State, 00000</p>
+        </div>
+        <div class="col-md-4">
+            <hr class="light">
+            <h5>Our hours</h5>
+            <hr class="light">
+            <p>Monday: 9am - 5pm</p>
+            <p>Saturday: 10am - 4pm</p>
+            <p>Sunday: closed</p>
+        </div>
+        <div class="col-md-4">
+            <hr class="light">
+            <h5>Service Area</h5>
+            <hr class="light">
+            <p>City, State, 00000</p>
+            <p>City, State, 00000</p>
+            <p>City, State, 00000</p>
+            <p>City, State, 00000</p>
+            <p>City, State, 00000</p>
+        </div>
+        <div class="col-12">
+        <hr class="light-100">
+        <h5>&copy; patient-doc.com</h5>
+        </div>
+    </div>    
+    </div>    
+    </footer>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script>
-    const slide_menu=document.querySelectorAll(".sidenav");
-    M.Sidenav.init(slide_menu, {});
-    </script>
-  </body>
+</body>
 </html>
+
+
