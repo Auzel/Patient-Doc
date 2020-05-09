@@ -10,21 +10,22 @@
         <div class="col-md-4 col-sm-4 col-xs-12">
             <!--form start-->   
             <form class="form-container"  action="login" method="POST">
+                {{ login.csrf_token }}
                 <h1>Log In</h1>
                 <div class="form-group">
-                    <label for="exampleInputEmail1">Username</label>
-                    <input type="text" name="username"  class="form-control" id="exampleInputEmail1" placeholder="Username">
+                    {{ login.username.label }}
+                    {{ login.username(size=20, class_="form-control") }}                  
                 </div>
                 <div class="form-group">
-                    <label for="exampleInputPassword1">Password</label>
-                    <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                    {{ login.password.label }}
+                    {{ login.password(size=20, class_="form-control") }}
                 </div>
                 <div class="checkbox">
-                    <label>
-                        <input type="checkbox"> Remember Me 
-                    </label>
+                    {{ login.remember_me() }}
+                    {{ login.remember_me.label }}
                 </div>
-                <button type="submit" class="btn btn-success btn-block">Log In</button>
+                    {{ login.submit(class_="btn btn-success btn-block") }}
+                   
             </form>  
             <!--form end-->
         </div>

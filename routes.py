@@ -3,6 +3,7 @@ from flask import Blueprint, request, redirect, render_template, flash, url_for
 from flask_login import current_user, login_user, logout_user, login_required
 from sqlalchemy.exc import IntegrityError
 from models import db, Med_Institution, User, Physician, Patient, Appointment, Med_Record, Release_Form
+from forms import Login
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
@@ -50,23 +51,30 @@ def signup():
             flash('username or email already exists')
             return redirect(url_for('.signup'))
         flash('Account Created!')
-        return render_template('/front_layout/login.html')        
+        return redirect(url_for('.login'))      
+
     return render_template('/front_layout/signup.html')
 
 
 @api.route('/login', methods=['GET', 'POST'])
 def login():
     ##when logged in he is redirected to the user-specific page where he can now view his profile/latest medical report or medical reports
-    if request.method == 'POST':
+    login = Login()
+    if login.validate_on_submit(): ##request.method == 'POST' and validate:
         data = request.form
         user = User.query.get(data['username'])
 
         if user and user.check_password(data['password']):
-            login_user(user)
+            if request.form.get("remember_me"):
+                login_user(user, remember=True )
+            else:
+                login_user(user)
             flash('Logged in successfully.') 
             return redirect(url_for('.index'))
-        flash('Invalid username or password') # send message to next page 
-    return render_template('/front_layout/login.html')
+        else:
+            flash('Invalid username or password') # send message to next page    
+            return redirect(url_for('.login')) 
+    return render_template('/front_layout/login.html', login=login)
 
 @api.route('/logout')
 @login_required
