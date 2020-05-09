@@ -2,7 +2,6 @@
 
 {% block title %}| Home {% endblock %}
 
-
 {% block content %} 
 
     <!--- Image Slider -->
@@ -14,7 +13,7 @@
         </ul>
     <div class="carousel-inner">
         <div class="carousel-item active">
-            <img src="/img/background.png">
+            <img src="{{ url_for('static', filename='/img/background.png') }}">
             <div class="carousel-caption">
                 <h1 class="display-2">PATIENT-DOC</h1>
                 <h3>Website for doctors and patients</h3>
@@ -23,10 +22,10 @@
             </div>
         </div>
             <div class="carousel-item">
-            <img src="/img/background1.png">
+            <img src="{{ url_for('static', filename='/img/background1.png') }} ">
         </div>
             <div class="carousel-item">
-            <img src="/img/background2.png">
+            <img src="{{ url_for('static', filename='/img/background2.png') }} ">
         </div>
     </div>
     </div>
@@ -35,7 +34,7 @@
     <div class="container-fluid">
     <div class="row jumbotron">
         <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 col-xl-10">
-            <p class="lead"> Patient-Doc has a muliplicity of diffierent medical insitutions with various dentists/physicans which are well experienced in their field of work.
+            <p class="lead"> Patient-Doc has a muliplicity of diffierent medical insitutions with various dentists/physicians which are well experienced in their field of work.
         </div>
         <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 col-xl-2">
             <a href="#"><button type="button" class="btn btn-outline-secondary btn-lg">Med. Institutions.</button></a>

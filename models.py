@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-db = SQLAlchemy()
+db = SQLAlchemy(engine_options={"pool_recycle": 60})
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
@@ -95,13 +95,14 @@ class Physician(User):
 
 
 class Appointment(db.Model):
-    physician_username = db.Column(db.String(20), db.ForeignKey('user.username'), primary_key=True)
-    patient_username = db.Column(db.String(20), db.ForeignKey('user.username'), primary_key=True) 
-    date=db.Column(db.DateTime, primary_key=True, default=datetime.datetime.utcnow())    
+    id = db.Column(db.Integer, primary_key=True)
+    physician_username = db.Column(db.String(20), db.ForeignKey('user.username'))
+    patient_username = db.Column(db.String(20), db.ForeignKey('user.username')) 
+    date=db.Column(db.DateTime, default=datetime.datetime.utcnow())    
     
     def toDict(self):
         return {
-            'date': self.date.strftime("%d/%B/%Y, %H:%M:%S") 
+            'date': self.date.strftime("%d/%B/%Y %H:%M:%S") 
         }
  
 
@@ -109,9 +110,11 @@ class Med_Institution(db.Model):
     __tablename__='med_institution'
 
     id = db.Column(db.Integer, primary_key=True)
-    address = db.Column(db.String(50), nullable=False)
     name = db.Column(db.String(20), nullable=False)
+    address = db.Column(db.String(50), nullable=False)
+    contact_no = db.Column(db.String(15), nullable=False)    
     physician = db.relationship('Physician', backref='med_institution', lazy=True)
+
 
     def toDict(self):
         return{
@@ -127,7 +130,7 @@ class Med_Record(db.Model):
     id = db.Column(db.Integer, primary_key=True)    
     current_problem = db.Column(db.String(20), nullable=True)
     current_treatment=db.Column(db.String(20), nullable=True)
-    history=db.Column(db.String(1000), nullable=True)
+    history=db.Column(db.String(2000), nullable=True)
     patient_username=db.Column(db.String(20), db.ForeignKey('user.username'), nullable=False)
 
 
@@ -151,5 +154,5 @@ class Release_Form(db.Model):
     def toDict(self):
         return {
             'id':self.id,
-            'date': self.date.strftime("%d/%B/%Y, %H:%M:%S")         
+            'date': self.date.strftime("%d/%B/%Y %H:%M:%S")         
         }

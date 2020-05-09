@@ -1,10 +1,8 @@
 {% extends "users_layout/users_layout.html" %}
-{% block title %}Patient-Doc/HomePage{% endblock %}
-{% block page %}Patient-Doc Confidentiality{% endblock %}
+{% block title %}| {{user.name}}'s Profile {% endblock %}
 
-{{ super() }}
-
-{% block content %}
+{% block sub_content %}
+    
     <!--Information to be edited according to the user model and according to what infor you want displayed.-->
     <!--VISIT /users_layout/profile or /users_layout/profile/<username>  for visual layout-->
     <div class="card">
@@ -21,5 +19,5 @@
             {% endif %}
         </div>
     </div>
-   
+
 {% endblock %}
