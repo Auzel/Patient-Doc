@@ -13,8 +13,8 @@
                 {{ login.csrf_token }}
                 <h1>Log In</h1>
                 <div class="form-group">
-                    {{ login.username.label }}
-                    {{ login.username(size=20, class_="form-control") }}                  
+                    {{ login.email.label }}
+                    {{ login.email(size=20, class_="form-control") }}                  
                 </div>
                 <div class="form-group">
                     {{ login.password.label }}
@@ -33,7 +33,6 @@
     </div>
 </div>
 
-       
   
 {% endblock %}
 

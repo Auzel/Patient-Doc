@@ -12,21 +12,12 @@
 	<script src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
 	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
-    <style>
-        /*signup*/
-        .bg{
-            background: url("{{ url_for('static', filename='/img/oldbackground.jpeg') }}") no-repeat; 
-            background-size: 100% 100%;
-            width: 100%; 
-            height: 100vh;
-            
-        }
+    <style>       
 
-        .form-container{border:0px solid black; padding:50px 60px; margin-top:20vh;
-            -webkit-box-shadow: -1px 4px 26px 11px rgba(0,0,0,0.75);
-            -moz-box-shadow: -1px 4px 26px 11px rgba(0,0,0,0.75);
-            box-shadow: -1px 4px 26px 11px rgba(0,0,0,0.75);    
-        }
+ /* body {
+    background: url("img/oldbackground.png") no-repeat;
+    background-size: 100%;
+} */
     </style>
 
 </head>
@@ -63,7 +54,7 @@
                         {% else %}
                             <li class="nav-item">
                                 
-                                <a class="nav-link" href="/patients/{{current_user.username}}/medical_record">Medical Record</a>
+                                <a class="nav-link" href="/patients/{{current_user.id}}/medical_record">Medical Record</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="/my_physicians">Physicians</a>
@@ -74,31 +65,30 @@
                            
                             <a class="nav-link" href="/release_forms">Releases</a>
                         </li>
-                    {% endif %}                                                  
 
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="/physicians">All Physicians</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/med_institutions">Institutions</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/about">About Us</a>
-                    </li>
-
-                    {% if current_user.is_authenticated %}    
                         <li class="nav-item">
                             <a class="nav-link" href="/logout">Logout</a>
                         </li>
-                    {% else %}                    
+                    {% else %}  
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/physicians">All Physicians</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/med_institutions">Institutions</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/about">About Us</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/login">Login</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/signup">Sign Up</a>
-                        </li>                       
-                    {% endif %}            
+                        </li>     
+
+                    {% endif %}
+                         
                 </ul>
             </div>
         </div>
