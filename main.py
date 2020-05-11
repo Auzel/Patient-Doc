@@ -8,7 +8,7 @@ from datetime import timedelta
 from routes import api
 from models import db, Med_Institution, User, Physician, Patient, Med_Record, Release_Form
 
-UPLOAD_FOLDER = '/static/img/user_uploads'
+UPLOAD_FOLDER = './static/img/user_uploads'
 
 ''' Begin Boilerplate Code '''
 

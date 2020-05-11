@@ -68,13 +68,16 @@ def signup():
     
     if signup.validate_on_submit():     
         ## we first deal with the file
-        print("hi")
+        
         
         file = request.files['license']
         
         filename = secure_filename(file.filename)
-        
-        file.save(os.path.join('/static/img/user_uploads', filename))
+        basedir = os.path.abspath(os.path.dirname(__file__))
+        print("hi")
+        print(os.path.join(basedir, './static/img/user_uploads', filename))
+        file.save(os.path.join(basedir, './static/img/user_uploads', filename))
+        #file.save(os.path.join('/static/img/user_uploads', filename))
         print('successful')
         
         ##other data
