@@ -5,7 +5,13 @@ from sqlalchemy.exc import IntegrityError
 from models import db, Med_Institution, User, Physician, Patient, Appointment, Med_Record, Release_Form
 from forms import Login, SignUp
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 
+import os
+'''
+from main import image_processing, allowed_file
+from werkzeug.utils import secure_filename
+'''
 
 import datetime
 ## consider when doctor or patient deleted, is it deleted from other tables
@@ -13,6 +19,8 @@ import datetime
 ##remember to configure flash cards
 
 
+#ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+UPLOAD_PATH = '/static/img/user_uploads'
 
 api = Blueprint('api', __name__)
 
@@ -22,7 +30,33 @@ def index():
     user=None
     if current_user.is_authenticated:
         user=current_user
+        if user.num_visits==1:
+            return redirect(url_for('.profile'))
     return render_template('/front_layout/home.html', user=user) 
+
+'''
+#file (image) handling
+def allowed_file(filename):
+    return '.' in filename and 
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def image_processing(request):
+     # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit an empty part without filename
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(api.config['UPLOAD_FOLDER'], filename))
+            return redirect(url_for('uploaded_file',
+                                    filename=filename))
+'''
 
 #include <link href="style2.css" type="text/css" rel="stylesheet">
 ## send title for templates
@@ -31,6 +65,15 @@ def signup():
     ### Need to make slight change for physician
     signup = SignUp()
     if signup.validate_on_submit():     
+        ## we first deal with the file
+        file = request.files['license']
+
+        filename = secure_filename(file.filename)
+        print("Philmon",filename)
+        file.save(os.path.join(api.config['UPLOAD_FOLDER'], filename))
+        return redirect(url_for('uploaded_file', filename=filename))
+        
+        ##other data
         data=request.form
 
         names = data['name'].split()
@@ -45,10 +88,11 @@ def signup():
 
         fname = fname[:20] if len(fname)>20 else fname
         lname = lname[:20] if len(lname)>20 else lname
-
+        
         type = data['type']
         if type=='patient':
             user = Patient(fname = fname, lname=lname, email=data['email'])
+          
         elif type=='physician':
             user = Physician(fname = fname, lname=lname, email=data['email']) 
 
@@ -81,6 +125,12 @@ def login():
             else:
                 login_user(user)
             flash('Logged in successfully.') 
+            
+            ##increment number of times user has logged in
+            user.num_visits +=1
+            db.session.add(user)
+            db.session.commit()
+
             return redirect(url_for('.index'))
         else:
             flash('Invalid email or password') # send message to next page    

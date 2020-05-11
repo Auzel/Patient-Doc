@@ -8,14 +8,16 @@ import datetime
 
 class User(UserMixin, db.Model):
     __tablename__='user'
+  
     id = db.Column(db.Integer, primary_key=True)
     fname = db.Column(db.String(20), nullable=False)
     lname = db.Column(db.String(20), nullable=False)
-    type = db.Column(db.String(50), nullable=False)    
     email=db.Column(db.String(50), nullable=False, unique=True)
     password=db.Column(db.String(80), nullable=False)
-    date_of_birth=db.Column(db.Date)
-    address=db.Column(db.String(50))
+    date_of_birth=db.Column(db.Date, nullable=False)
+    address=db.Column(db.String(50), nullable=False)
+    type = db.Column(db.String(50), nullable=False)    
+    num_visits = db.Column(db.Integer, default=0)
     
     
     
@@ -30,11 +32,11 @@ class User(UserMixin, db.Model):
         return{            
             'fname': self.fname,
             'lname': self.lname,   
-            'type': self.type,
             'email': self.email,         
             'password': self.password,            
             'date_of_birth': self.date_of_birth.strftime("%d/%B/%Y"),
-            'address': self.address
+            'address': self.address,
+            'type': self.type
         }
 
     def set_password(self, password):

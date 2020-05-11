@@ -11,13 +11,14 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 	<script src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
 	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
+    
     <style>       
-
- /* body {
-    background: url("img/oldbackground.png") no-repeat;
-    background-size: 100%;
-} */
+        {% block css %}
+        {% endblock %}
+        /* body {
+            background: url("img/oldbackground.png") no-repeat;
+            background-size: 100%;
+        } */
     </style>
 
 </head>
@@ -138,7 +139,11 @@
             </div>    
         </div>    
     </footer>
-
+    <script>
+        {% block js %}
+            
+        {% endblock %}
+    </script>
 </body>
 </html>
 
