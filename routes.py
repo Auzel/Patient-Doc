@@ -74,7 +74,7 @@ def signup():
         
         filename = secure_filename(file.filename)
         
-        file.save(os.path.join('/static/img/user_uploads', filename))
+        file.save(os.path.join(url_for('static', filename='/img/user_uploads'), filename))
         print('successful')
         
         ##other data
