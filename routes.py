@@ -65,9 +65,10 @@ def image_processing(request):
 def signup():
     ### Need to make slight change for physician
     signup = SignUp()
-    print("Philmon new")
+    
     if signup.validate_on_submit():     
         ## we first deal with the file
+        print("hi")
         
         file = request.files['license']
         
@@ -77,8 +78,9 @@ def signup():
         print('successful')
         
         ##other data
+        
         data=request.form
-
+        
         names = data['name'].split()
 
         fname=names[0]
@@ -92,12 +94,17 @@ def signup():
         fname = fname[:20] if len(fname)>20 else fname
         lname = lname[:20] if len(lname)>20 else lname
         
+        DOB = datetime.datetime.strptime(data['DOB'],"%Y-%m-%d")
+
         type = data['type']
         if type=='patient':
-            user = Patient(fname = fname, lname=lname, email=data['email'])
+            user = Patient(fname = fname, lname=lname, email=data['email'], address=data['address'], date_of_birth=DOB)
           
         elif type=='physician':
-            user = Physician(fname = fname, lname=lname, email=data['email']) 
+            ##deal with dereference key to an integer
+            ##remember to add med_id to variable
+            user = Physician(fname = fname, lname=lname, email=data['email'], address=data['address'], date_of_birth=DOB,
+            type1=data['physician_type'], degree=data['degree'],place_of_education = data['place_of_education'] ) 
 
         user.set_password(data['password']) # set password                    
 
