@@ -4,6 +4,7 @@ from wtforms.validators import InputRequired, DataRequired, EqualTo, Email
 from wtforms.fields.html5 import  DateField
 from wtforms.validators import ValidationError
 import re
+import io
 
 class Login(FlaskForm):
     email= StringField('Email',render_kw={"placeholder": "Email"}, validators=[InputRequired("Please enter your email."), validators.Length(max=50), Email()])
@@ -29,9 +30,9 @@ class SignUp(FlaskForm):
     
     def validate_license(form, field):
         print("here")
-        filename=field.data.read().decode('UTF-8')
+        filename=field.data.filename
         valid = '.' in filename and filename.rsplit('.', 1)[1].lower() in {'jpg','jpeg','png'}
-        print("Philmon",filename)
+        print(valid,type(filename))
         if not valid:
             raise ValidationError("Incorrect format")
         

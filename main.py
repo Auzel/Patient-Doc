@@ -8,7 +8,7 @@ from datetime import timedelta
 from routes import api
 from models import db, Med_Institution, User, Physician, Patient, Med_Record, Release_Form
 
-#UPLOAD_FOLDER = '/static/img/user_uploads'
+UPLOAD_FOLDER = '/static/img/user_uploads'
 
 ''' Begin Boilerplate Code '''
 
@@ -27,7 +27,7 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://b4ab06921840a3:995a5935@us-cdbr-iron-east-01.cleardb.net/heroku_b2abbb44d079db0'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     app.config['SECRET_KEY'] = 'P@T|nt-D0CT0R@App'    
-    #app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     #app.config['JWT_EXPIRATION_DELTA'] = timedelta(days = 1)   
     login_manager.init_app(app)
     ##login_manager.login_view = 'app.login'   

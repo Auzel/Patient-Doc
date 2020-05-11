@@ -8,6 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 
 import os
+
 '''
 from main import image_processing, allowed_file
 from werkzeug.utils import secure_filename
@@ -64,14 +65,16 @@ def image_processing(request):
 def signup():
     ### Need to make slight change for physician
     signup = SignUp()
+    print("Philmon new")
     if signup.validate_on_submit():     
         ## we first deal with the file
+        
         file = request.files['license']
-
+        
         filename = secure_filename(file.filename)
-        print("Philmon",filename)
-        file.save(os.path.join(api.config['UPLOAD_FOLDER'], filename))
-        return redirect(url_for('uploaded_file', filename=filename))
+        
+        file.save(os.path.join('/static/img/user_uploads', filename))
+        print('successful')
         
         ##other data
         data=request.form
