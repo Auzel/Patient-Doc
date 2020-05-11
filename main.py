@@ -30,7 +30,7 @@ def create_app():
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     #app.config['JWT_EXPIRATION_DELTA'] = timedelta(days = 1)   
     login_manager.init_app(app)
-    ##login_manager.login_view = 'app.login'   
+    login_manager.login_view = 'api.login'   
     CORS(app)
     db.init_app(app)
     return app

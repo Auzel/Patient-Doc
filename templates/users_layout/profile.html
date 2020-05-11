@@ -1,23 +1,89 @@
 {% extends "users_layout/users_layout.html" %}
 {% block title %}| {{user.name}}'s Profile {% endblock %}
 
+{% block link %}
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<link href="{{ url_for('static', filename='styles/style3.css') }}" rel="stylesheet">
+{% endblock %}
+
 {% block sub_content %}
-    
-    <!--Information to be edited according to the user model and according to what infor you want displayed.-->
-    <!--VISIT /users_layout/profile or /users_layout/profile/<username>  for visual layout-->
-    <div class="card">
-        <div class="card-body">
-            <h4>{{username}}</h4>
-            <hr>
-            {%if user%}
-            <p>{{user["fname"]}}</p>
-            <p>{{user["lname"]}}</p>
-            <p>{{user["date_of_birth"]}}</p>
-            <p>{{user["address"]}}</p>
-            {% else %}
-            <p>Invalid Username</p>
-            {% endif %}
+ 
+    <div class="container">
+        <div class="row profile">
+            <div class="col-md-3">
+                <div class="profile-sidebar">
+                    <!-- SIDEBAR USERPIC -->
+                    <div class="profile-userpic">
+                        <img src="https://static.change.org/profile-img/default-user-profile.svg" class="img-responsive" alt="">
+                    </div>
+                    <!-- END SIDEBAR USERPIC -->
+                    <!-- SIDEBAR USER TITLE -->
+                    <div class="profile-usertitle">
+                        <div class="profile-usertitle-name">
+                            {{user.fname}}  {{user.lname}}
+                        </div>
+                        <div class="profile-usertitle-job">
+                            {{user.type}}
+                        </div>
+                    </div>
+                    <!-- END SIDEBAR USER TITLE -->
+                    <!-- SIDEBAR BUTTONS -->
+                    <div class="profile-userbuttons">
+                        <button type="button" class="btn btn-success btn-sm">Make appointment</button>
+                        <button type="button" class="btn btn-danger btn-sm">Smn else</button>
+                    </div>
+                    <!-- END SIDEBAR BUTTONS -->
+                    <!-- SIDEBAR MENU -->
+                    <div class="profile-usermenu">
+                        <ul class="nav">
+                            <li class="active">
+                                <a href="main.html">
+                                <i class="glyphicon glyphicon-home"></i>
+                                Overview </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                <i class="glyphicon glyphicon-user"></i>
+                                Account Settings </a>
+                            </li>
+                            <li>
+                                <a href="#" target="_blank">
+                                <i class="glyphicon glyphicon-ok"></i>
+                                Tasks </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                <i class="glyphicon glyphicon-flag"></i>
+                                Help </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- END MENU -->
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="profile-content">
+                    {% if user %}
+
+                        <p>{{user.type}}</p>
+                        <p> {{user.fname}}  {{user.lname}}</p></p>
+                        <p>{{user.email}}</p>
+                        <p>password*******</p>
+                        <p>{{user.date_of_birth.strftime("%d-%B-%Y")}}</p>
+                        <p>{{user.address}}</p>
+                        {% if user.type == 'physician' %}                   
+                            <p>{{user.physician_type}}</p>
+                            <p>{{user.degree}}</p>
+                            <p>{{user.place_of_education}}</p>
+                            <p>license ----picture----</p>
+                            <p>{{user.med_key}}</p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </div>
-
+    
 {% endblock %}

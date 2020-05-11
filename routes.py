@@ -1,29 +1,20 @@
-from flask import Blueprint, request, redirect, render_template, flash, url_for
+from flask import Blueprint, request, redirect, render_template, flash, url_for, current_app
 #from flask_jwt import jwt_required, current_identity
 from flask_login import current_user, login_user, logout_user, login_required
 from sqlalchemy.exc import IntegrityError
 from models import db, Med_Institution, User, Physician, Patient, Appointment, Med_Record, Release_Form
-from forms import Login, SignUp
+from forms import Login, SignUp, Physician_SignUp
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-
-import os
-
-'''
-from main import image_processing, allowed_file
-from werkzeug.utils import secure_filename
-'''
-
 import datetime
+import os
+api = Blueprint('api', __name__)
+from main import UPLOAD_FOLDER
+
+
 ## consider when doctor or patient deleted, is it deleted from other tables
 
 ##remember to configure flash cards
-
-
-#ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-UPLOAD_PATH = '/static/img/user_uploads'
-
-api = Blueprint('api', __name__)
 
 
 @api.route('/')
@@ -31,33 +22,11 @@ def index():
     user=None
     if current_user.is_authenticated:
         user=current_user
-        if user.num_visits==1:
+        if user.num_visits==0:
+            user.num_visits+=1
             return redirect(url_for('.profile'))
-    return render_template('/front_layout/home.html', user=user) 
+    return render_template('/front_layout/home.html', user=user,  title="Home") 
 
-'''
-#file (image) handling
-def allowed_file(filename):
-    return '.' in filename and 
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-def image_processing(request):
-     # check if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['file']
-        # if user does not select file, browser also
-        # submit an empty part without filename
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(api.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('uploaded_file',
-                                    filename=filename))
-'''
 
 #include <link href="style2.css" type="text/css" rel="stylesheet">
 ## send title for templates
@@ -65,25 +34,16 @@ def image_processing(request):
 def signup():
     ### Need to make slight change for physician
     signup = SignUp()
-    
+    physician_signup = Physician_SignUp()
+
     if signup.validate_on_submit():     
-        ## we first deal with the file
-        
-        
-        file = request.files['license']
-        
-        filename = secure_filename(file.filename)
-        basedir = os.path.abspath(os.path.dirname(__file__))
-        print("hi")
-        print(os.path.join(basedir, './static/img/user_uploads', filename))
-        file.save(os.path.join(basedir, './static/img/user_uploads', filename))
-        #file.save(os.path.join('/static/img/user_uploads', filename))
-        print('successful')
-        
-        ##other data
         
         data=request.form
-        
+        type = data['type']
+
+        if type == 'physician' and not physician_signup.validate_on_submit():
+            return redirect(request.url)
+                   
         names = data['name'].split()
 
         fname=names[0]
@@ -93,13 +53,12 @@ def signup():
         else: ##no lname given
             lname=""
 
-
         fname = fname[:20] if len(fname)>20 else fname
         lname = lname[:20] if len(lname)>20 else lname
         
         DOB = datetime.datetime.strptime(data['DOB'],"%Y-%m-%d")
 
-        type = data['type']
+        
         if type=='patient':
             user = Patient(fname = fname, lname=lname, email=data['email'], address=data['address'], date_of_birth=DOB)
           
@@ -109,6 +68,11 @@ def signup():
             user = Physician(fname = fname, lname=lname, email=data['email'], address=data['address'], date_of_birth=DOB,
             type1=data['physician_type'], degree=data['degree'],place_of_education = data['place_of_education'] ) 
 
+            ##Store MedicalFile
+            file = request.files['license']        
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
+            
         user.set_password(data['password']) # set password                    
 
         try:
@@ -122,7 +86,7 @@ def signup():
         flash('Account Created!')
         return redirect(url_for('.login'))      
 
-    return render_template('/front_layout/signup.html', signup=signup)
+    return render_template('/front_layout/signup.html', signup=signup, physician_signup=physician_signup, title="Sign Up")
 
 
 @api.route('/login', methods=['GET', 'POST'])
@@ -139,8 +103,6 @@ def login():
                 login_user(user)
             flash('Logged in successfully.') 
             
-            ##increment number of times user has logged in
-            user.num_visits +=1
             db.session.add(user)
             db.session.commit()
 
@@ -148,7 +110,7 @@ def login():
         else:
             flash('Invalid email or password') # send message to next page    
             return redirect(url_for('.login')) 
-    return render_template('/front_layout/login.html', login=login)
+    return render_template('/front_layout/login.html', login=login,  title="Login")
 
 @api.route('/logout')
 @login_required
@@ -168,14 +130,14 @@ def profile():
         user=Physician.query.get(current_user.id)
     
     if request.method == 'GET':
-        return render_template('/users_layout/profile.html', user=user)
+        return render_template('/users_layout/profile.html', user=user,  title="Profile")
 
     else: ## request.method == 'POST' for Updating profile:
         data = request.form
         if 'name' in data:
             fname,lname=data['fname'].split()
-            fname = fname[:20].strip() if len(fname)>20 else fname.strip()
-            lname = lname[:20].strip() if len(lname)>20 else lname.strip()
+            fname = fname[:20] if len(fname)>20 else fname
+            lname = lname[:20] if len(lname)>20 else lname
 
             user.fname = fname    
             user.lname = lname
@@ -546,11 +508,4 @@ def cancel_releases():
 
 @api.route('/about')
 def get_about():
-    return render_template('/front_layout/about.html')
-
-
-@api.errorhandler(401)
-@api.route('/unauthorize')
-def unauthorize(e):
-    flash('You are not authorize to perform this action')
-    return render_template('/error_handling/unauthorize.html'),401
+    return render_template('/front_layout/about.html', title="About Us")

@@ -34,9 +34,10 @@ class User(UserMixin, db.Model):
             'lname': self.lname,   
             'email': self.email,         
             'password': self.password,            
-            'date_of_birth': self.date_of_birth.strftime("%d/%B/%Y"),
+            'date_of_birth': self.date_of_birth.strftime("%d-%B-%Y"),
             'address': self.address,
-            'type': self.type
+            'type': self.type,
+            'num_visits': self.num_visits
         }
 
     def set_password(self, password):
