@@ -1,0 +1,38 @@
+{% extends "main_layout/main_layout.html" %}
+{% block title %}| {{title}} {% endblock %}
+
+
+{% block content %}
+         
+
+    <br>
+    <h2 id=tables-striped>{% block heading %} {% endblock %}</h2> 
+
+    <div class="bs-callout bs-callout-danger" id=callout-tables-striped-ie8> 
+        <p>{% block sub_heading %} {% endblock %}</p> 
+    </div> 
+    
+    <br>
+
+    <div class=bs-example data-example-id=striped-table> 
+
+        <table class="table table-striped"> 
+            <thead> 
+                <tr> 
+                    {% block table_headers %}
+                    {% endblock %}
+                </tr> 
+            </thead> 
+
+            <tbody> 
+                {% block table_body %}
+                {% endblock %}
+            </tbody>             
+            
+        </table> 
+    </div> 
+
+
+   
+{% endblock %}
+

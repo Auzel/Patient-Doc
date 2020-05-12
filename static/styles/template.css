@@ -102,7 +102,8 @@ b, strong, .bold {
   left: 0;
   bottom: 0;
   width: 100px;
-  background: url("{{ url_for('static', filename='img/jpg_png/stripe-bg.jpg') }} ") center bottom no-repeat, url("{{ url_for('static', filename='img/jpg_png/stripe-bg.jpg') }} ") repeat;
+  /*background: url("{{ url_for('static', filename='img/jpg_png/stripe-bg.jpg') }} ") center bottom no-repeat, url("{{ url_for('static', filename='img/jpg_png/stripe-bg.jpg') }} ") repeat;
+*/
 }
 .left-stripes .circle {
   -moz-border-radius: 50%;

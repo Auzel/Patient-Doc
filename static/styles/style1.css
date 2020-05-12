@@ -6,7 +6,7 @@
 } */
 
 .bg{
-    background: url('img/oldbackground.jpeg') no-repeat; 
+    background: url("../img/jpg_png/oldbackground.jpeg") no-repeat; 
     background-size: 100% 100%;
     width: 100%; 
     height: 100vh;

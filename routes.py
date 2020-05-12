@@ -1,4 +1,4 @@
-from flask import Blueprint, request, redirect, render_template, flash, url_for, current_app
+from flask import Blueprint, request, redirect, render_template, flash, url_for, current_app, session, abort
 #from flask_jwt import jwt_required, current_identity
 from flask_login import current_user, login_user, logout_user, login_required
 from sqlalchemy.exc import IntegrityError
@@ -6,6 +6,7 @@ from models import db, Med_Institution, User, Physician, Patient, Appointment, M
 from forms import Login, SignUp, Physician_SignUp
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+
 import datetime
 import os
 api = Blueprint('api', __name__)
@@ -25,7 +26,7 @@ def index():
         if user.num_visits==0:
             user.num_visits+=1
             return redirect(url_for('.profile'))
-    return render_template('/front_layout/home.html', user=user,  title="Home") 
+    return render_template('/main_layout/home.html', user=user,  title="Home") 
 
 
 #include <link href="style2.css" type="text/css" rel="stylesheet">
@@ -86,7 +87,7 @@ def signup():
         flash('Account Created!')
         return redirect(url_for('.login'))      
 
-    return render_template('/front_layout/signup.html', signup=signup, physician_signup=physician_signup, title="Sign Up")
+    return render_template('/main_layout/signup.html', signup=signup, physician_signup=physician_signup, title="Sign Up")
 
 
 @api.route('/login', methods=['GET', 'POST'])
@@ -103,14 +104,16 @@ def login():
                 login_user(user)
             flash('Logged in successfully.') 
             
-            db.session.add(user)
-            db.session.commit()
+            next = request.args.get('next')
 
-            return redirect(url_for('.index'))
+            ##if not is_safe_url(next):
+                ##return abort(400)
+            return redirect(next or url_for('.index'))
+
         else:
             flash('Invalid email or password') # send message to next page    
             return redirect(url_for('.login')) 
-    return render_template('/front_layout/login.html', login=login,  title="Login")
+    return render_template('/main_layout/login.html', login=login,  title="Login")
 
 @api.route('/logout')
 @login_required
@@ -130,7 +133,7 @@ def profile():
         user=Physician.query.get(current_user.id)
     
     if request.method == 'GET':
-        return render_template('/users_layout/profile.html', user=user,  title="Profile")
+        return render_template('/main_layout/profile.html', user=user,  title="Profile")
 
     else: ## request.method == 'POST' for Updating profile:
         data = request.form
@@ -190,7 +193,7 @@ def get_patient(id):
         else:
             flash("Invalid patient.")
 
-    return render_template('/users_layout/profile.html', user=patient)
+    return render_template('/main_layout/profile.html', user=patient)
 
 
 ##This method allows a patient to view and create their medical record. If exists, patient or physician may edit the medical records in distinct ways.
@@ -249,7 +252,7 @@ def medical_record(id):
             med_record = Med_Record.query.filter_by(patient_id=id).first()
         if med_record is None:            
             flash ("You are not authorized to perform this action.")              
-        return render_template('/users_layout/medical_record.html',med_record=med_record)  # do logic and check if med_records
+        return render_template('/main_layout/medical_record.html',med_record=med_record)  # do logic and check if med_records
 
 
 
@@ -347,7 +350,7 @@ def appointments():
             else:
                 appointments = Physician.query.get(current_user.id).appointments ## come back and order by newest
 
-        return render_template('/users_layout/appointment_list.html',appointment=appointments)
+        return render_template('/listing_layout/appointment_list.html',appointment=appointments)
 
 
 ## Besides viewing, a patient can change and delete appointments; whereas, a physician can only  change appoinments
@@ -419,7 +422,7 @@ def get_my_physicians():
                 if not appointment.physician_id in used:
                     used.add(appointment.physician_id)
                     physicians.append(appointment.physician)
-        return render_template('/users_layout/users_list.html',users=physicians, title='My Physicians') 
+        return render_template('/listing_layout/users_list.html',users=physicians, title='My Physicians') 
     else:
         flash('Invalid Request. You are not a patient')
         return redirect(url_for('.index'))
@@ -435,7 +438,7 @@ def get_my_patients():
             if not appointment.patient_id in used:
                 used.add(appointment.patient_id)
                 patients.append(appointment.patient)
-        return render_template('/users_layout/users_list.html',users=patients, title='My Patients')
+        return render_template('/listing_layout/users_list.html',users=patients, title='My Patients')
     else:
         flash('Invalid Request. You are not a physician.')
         return redirect(url_for('.index'))
@@ -443,18 +446,18 @@ def get_my_patients():
 @api.route('/physicians')
 def get_physicians():
     physicians=Physician.query.all()
-    return render_template('/users_layout/users_list.html',users=physicians, title="Physicians Listing")
+    return render_template('/listing_layout/users_list.html',users=physicians, title="Physicians Listing")
 
 @api.route('/physicians/<id>')
 def get_physician(id):    
     physician = Physician.query.filter_by(id = id).first()
-    return render_template('/users_layout/profile.html', user=physician)
+    return render_template('/listing_layout/profile.html', user=physician)
 
 
 @api.route('/med_institutions')
 def get_med_institutions():
     med_institutions = Med_Institution.query.all()
-    return render_template('/users_layout/med_institution_list.html',med_institutions=med_institutions)
+    return render_template('/listing_layout/med_institution_list.html',med_institutions=med_institutions)
 
 '''
 @api.route('/med_institutions/<id>')
@@ -472,7 +475,7 @@ def get_releases():
         release_forms = Release_Form.query.filter_by(patient_id=current_user.id).all()
     else:
         release_forms = Release_Form.query.filter_by(physician_id=current_user.id).all()
-    return render_template('users_layout/releases.html',release_forms=release_forms)
+    return render_template('listing_layout/releases.html',release_forms=release_forms)
     
 ##Pnly a patient can remove a release form
 @api.route('/release_forms/<id>')
@@ -508,4 +511,57 @@ def cancel_releases():
 
 @api.route('/about')
 def get_about():
-    return render_template('/front_layout/about.html', title="About Us")
+    return render_template('/main_layout/about.html', title="About Us")
+
+
+##facebook
+#----------------------------------------
+# facebook authentication
+#----------------------------------------
+
+
+
+FACEBOOK_APP_ID = '000000000000000'
+FACEBOOK_APP_SECRET = '0a0b0c00000000000000000000x0y0z0'
+
+oauth = OAuth()
+
+facebook = oauth.remote_app('facebook',
+    base_url='https://graph.facebook.com/',
+    request_token_url=None,
+    access_token_url='/oauth/access_token',
+    authorize_url='https://www.facebook.com/dialog/oauth',
+    consumer_key=FACEBOOK_APP_ID,
+    consumer_secret=FACEBOOK_APP_SECRET,
+    request_token_params={'scope': ('email, ')}
+)
+
+@facebook.tokengetter
+def get_facebook_token():
+    return session.get('facebook_token')
+
+def pop_login_session():
+    session.pop('logged_in', None)
+    session.pop('facebook_token', None)
+
+@app.route("/facebook_login")
+def facebook_login():
+    return facebook.authorize(callback=url_for('facebook_authorized',
+        next=request.args.get('next'), _external=True))
+
+@app.route("/facebook_authorized")
+@facebook.authorized_handler
+def facebook_authorized(resp):
+    next_url = request.args.get('next') or url_for('index')
+    if resp is None or 'access_token' not in resp:
+        return redirect(next_url)
+
+    session['logged_in'] = True
+    session['facebook_token'] = (resp['access_token'], '')
+
+    return redirect(next_url)
+
+@app.route("/logout")
+def logout():
+    pop_login_session()
+    return redirect(url_for('index'))

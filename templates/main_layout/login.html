@@ -1,5 +1,15 @@
-{% extends "front_layout/front_layout.html" %}
+{% extends "main_layout/main_layout.html" %}
 {% block title %}| {{title}} {% endblock %}
+
+{% block link %}
+
+<link href="{{ url_for('static', filename='styles/style1.css') }}" type="text/css" rel="stylesheet">
+
+{% endblock %}
+
+{% block css %}
+
+{% endblock %}
 
 
 {% block content %}

@@ -1,4 +1,4 @@
-{% extends "users_layout/users_layout.html" %}
+{% extends "main_layout/main_layout.html" %}
 {% block title %}| {{user.name}}'s Profile {% endblock %}
 
 {% block link %}
@@ -8,8 +8,8 @@
 	<link href="{{ url_for('static', filename='styles/style3.css') }}" rel="stylesheet">
 {% endblock %}
 
-{% block sub_content %}
- 
+{% block content %}
+   
     <div class="container">
         <div class="row profile">
             <div class="col-md-3">
@@ -39,7 +39,7 @@
                     <div class="profile-usermenu">
                         <ul class="nav">
                             <li class="active">
-                                <a href="main.html">
+                                <a href="/">
                                 <i class="glyphicon glyphicon-home"></i>
                                 Overview </a>
                             </li>

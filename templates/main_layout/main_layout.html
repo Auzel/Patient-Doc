@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>Patient-Doc {% block title %} {% endblock %}</title>
-    <link rel="icon" href="{{ url_for('static', filename='/img/logohead.png') }}">
+    <link rel="icon" href="{{ url_for('static', filename='img/jpg_png/logohead.png') }}">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
@@ -14,6 +15,7 @@
 	<link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
     {% block link%}
     {% endblock %}
+    
     <style>       
         {% block css %}
         {% endblock %}
@@ -31,7 +33,7 @@
   <!-- Navigation -->
     <nav class="navbar navbar-expand-md navbar-light bg-light sticky-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/"><img src="{{ url_for('static', filename='/img/logo.png') }}"></a>
+            <a class="navbar-brand" href="/"><img src="{{ url_for('static', filename='img/jpg_png/logo.png') }} "></a>
             {% if current_user.is_authenticated %}
                 <span> Hi, {{current_user.fname}} </span>
             {% endif %}
@@ -75,6 +77,10 @@
                     {% else %}  
 
                         <li class="nav-item">
+                            <a class="nav-link" href="/">Home</a>
+                        </li>
+
+                        <li class="nav-item">
                             <a class="nav-link" href="/physicians">All Physicians</a>
                         </li>
                         <li class="nav-item">
@@ -97,7 +103,7 @@
         </div>
     </nav>
 
-    <main class="temp">
+    <main class="narrow">
      
         {% block content %} 
 
@@ -109,7 +115,7 @@
         <div class="container-fluid padding">
             <div class="row text-center">
                 <div class="col-md-4">
-                    <img src="{{ url_for('static', filename='/img/footerlogo.png') }}">
+                    <img src="{{ url_for('static', filename='img/jpg_png/footerlogo.png') }}">
                     <hr class="light">
                     <p>555-555-5555</p>
                     <p>email@myemail.com</p>
