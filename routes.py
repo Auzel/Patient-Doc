@@ -10,7 +10,8 @@ from werkzeug.utils import secure_filename
 import datetime
 import os
 api = Blueprint('api', __name__)
-from main import UPLOAD_FOLDER
+
+UPLOAD_FOLDER = './static/img/user_uploads'
 
 
 ## consider when doctor or patient deleted, is it deleted from other tables
