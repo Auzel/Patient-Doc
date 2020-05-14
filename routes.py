@@ -300,8 +300,8 @@ def medical_record(id):
             med_record=Med_Record.query.filter_by(patient_id=current_user.id).first()
         elif current_user.type=='physician' and Release_Form.query.filter_by(physician_id=current_user.id, patient_id=id).first():
             med_record = Med_Record.query.filter_by(patient_id=id).first()
-        ##if med_record is None:            
-            ##return redirect(url_for('.unauthorized'))   
+        if med_record is None:            
+            return redirect(url_for('.unauthorized'))   
        
         return render_template('/main_layout/medical_record.html',med_record=med_record)  # do logic and check if med_records
 
