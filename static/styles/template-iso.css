@@ -1,0 +1,457 @@
+.template-iso {
+  /*! Invoice Templates @author: Invoicebus @email: info@invoicebus.com @web: https://invoicebus.com @version: 1.0.0 @updated: 2015-03-27 14:03:24 @license: Invoicebus */
+  /* Reset styles */
+  /* Invoice styles */
+  /**
+ * DON'T override any styles for the <html> and <body> tags, as this may break the layout.
+ * Instead wrap everything in one main <div id="container"> element where you may change
+ * something like the font or the background of the invoice
+ */
+  /** 
+ * IMPORTANT NOTICE: DON'T USE '!important' otherwise this may lead to broken print layout.
+ * Some browsers may require '!important' in oder to work properly but be careful with it.
+ */
+  /**
+ * If the printed invoice is not looking as expected you may tune up
+ * the print styles (you can use !important to override styles)
+ */
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Open Sans Italic'), local('OpenSans-Italic'), url(https://fonts.gstatic.com/s/opensans/v17/mem6YaGs126MiZpBA-UFUJ0e.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans Regular'), local('OpenSans-Regular'), url(https://fonts.gstatic.com/s/opensans/v17/mem8YaGs126MiZpBA-U1Ug.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Open Sans Bold'), local('OpenSans-Bold'), url(https://fonts.gstatic.com/s/opensans/v17/mem5YaGs126MiZpBA-UN7rg-VQ.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Sanchez';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Sanchez'), local('Sanchez-Regular'), url(https://fonts.gstatic.com/s/sanchez/v7/Ycm2sZJORluHnXbIfmdR-A.ttf) format('truetype');
+}
+.template-iso html,
+.template-iso body,
+.template-iso div,
+.template-iso span,
+.template-iso applet,
+.template-iso object,
+.template-iso iframe,
+.template-iso h1,
+.template-iso h2,
+.template-iso h3,
+.template-iso h4,
+.template-iso h5,
+.template-iso h6,
+.template-iso p,
+.template-iso blockquote,
+.template-iso pre,
+.template-iso a,
+.template-iso abbr,
+.template-iso acronym,
+.template-iso address,
+.template-iso big,
+.template-iso cite,
+.template-iso code,
+.template-iso del,
+.template-iso dfn,
+.template-iso em,
+.template-iso img,
+.template-iso ins,
+.template-iso kbd,
+.template-iso q,
+.template-iso s,
+.template-iso samp,
+.template-iso small,
+.template-iso strike,
+.template-iso strong,
+.template-iso sub,
+.template-iso sup,
+.template-iso tt,
+.template-iso var,
+.template-iso b,
+.template-iso u,
+.template-iso i,
+.template-iso center,
+.template-iso dl,
+.template-iso dt,
+.template-iso dd,
+.template-iso ol,
+.template-iso ul,
+.template-iso li,
+.template-iso fieldset,
+.template-iso form,
+.template-iso label,
+.template-iso legend,
+.template-iso table,
+.template-iso caption,
+.template-iso tbody,
+.template-iso tfoot,
+.template-iso thead,
+.template-iso tr,
+.template-iso th,
+.template-iso td,
+.template-iso article,
+.template-iso aside,
+.template-iso canvas,
+.template-iso details,
+.template-iso embed,
+.template-iso figure,
+.template-iso figcaption,
+.template-iso footer,
+.template-iso header,
+.template-iso hgroup,
+.template-iso menu,
+.template-iso nav,
+.template-iso output,
+.template-iso ruby,
+.template-iso section,
+.template-iso summary,
+.template-iso time,
+.template-iso mark,
+.template-iso audio,
+.template-iso video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+.template-iso html {
+  line-height: 1;
+}
+.template-iso ol,
+.template-iso ul {
+  list-style: none;
+}
+.template-iso table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+.template-iso caption,
+.template-iso th,
+.template-iso td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+.template-iso q,
+.template-iso blockquote {
+  quotes: none;
+}
+.template-iso q:before,
+.template-iso q:after,
+.template-iso blockquote:before,
+.template-iso blockquote:after {
+  content: "";
+  content: none;
+}
+.template-iso a img {
+  border: none;
+}
+.template-iso article,
+.template-iso aside,
+.template-iso details,
+.template-iso figcaption,
+.template-iso figure,
+.template-iso footer,
+.template-iso header,
+.template-iso hgroup,
+.template-iso main,
+.template-iso menu,
+.template-iso nav,
+.template-iso section,
+.template-iso summary {
+  display: block;
+}
+.template-iso html,
+.template-iso body {
+  /* MOVE ALONG, NOTHING TO CHANGE HERE! */
+}
+.template-iso .clearfix {
+  display: block;
+  clear: both;
+}
+.template-iso .x-hidden {
+  display: none !important;
+}
+.template-iso .hidden {
+  display: none;
+}
+.template-iso b,
+.template-iso strong,
+.template-iso .bold {
+  font-weight: bold;
+}
+.template-iso #container {
+  font: normal 13px/1.4em 'Open Sans', Sans-serif;
+  margin: 0 auto;
+  min-height: 1158px;
+  position: relative;
+}
+.template-iso .left-stripes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 100px;
+  background: url("img/stripe-bg.jpg") center bottom no-repeat, url("img/stripe-bg.jpg") repeat;
+}
+.template-iso .left-stripes .circle {
+  -moz-border-radius: 50%;
+  -webkit-border-radius: 50%;
+  border-radius: 50%;
+  background: #415472;
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  left: 33%;
+}
+.template-iso .left-stripes .circle.c-upper {
+  top: 440px;
+}
+.template-iso .left-stripes .circle.c-lower {
+  top: 690px;
+}
+.template-iso .right-invoice {
+  padding: 40px 30px 40px 130px;
+  min-height: 1078px;
+}
+.template-iso #memo .company-info {
+  float: left;
+}
+.template-iso #memo .company-info div {
+  font-size: 28px;
+  text-transform: uppercase;
+  min-width: 20px;
+  line-height: 1em;
+}
+.template-iso #memo .company-info span {
+  font-size: 12px;
+  color: #858585;
+  display: inline-block;
+  min-width: 20px;
+}
+.template-iso #memo .logo {
+  float: left;
+  margin-left: 15px;
+}
+.template-iso #memo .logo img {
+  width: 150px;
+  height: 100px;
+}
+.template-iso #memo:after {
+  content: '';
+  display: block;
+  clear: both;
+}
+.template-iso #invoice-title-number {
+  margin: 50px 0 20px 0;
+  display: inline-block;
+  float: left;
+}
+.template-iso #invoice-title-number .title-top {
+  font-size: 15px;
+  margin-bottom: 5px;
+}
+.template-iso #invoice-title-number .title-top span {
+  display: inline-block;
+  min-width: 20px;
+}
+.template-iso #invoice-title-number .title-top #number {
+  text-align: right;
+  float: right;
+  color: #858585;
+}
+.template-iso #invoice-title-number .title-top:after {
+  content: '';
+  display: block;
+  clear: both;
+}
+.template-iso #invoice-title-number #title {
+  display: inline-block;
+  background: #415472;
+  color: white;
+  font-size: 50px;
+  padding: 7px;
+  font-family: Sanchez, Serif;
+  line-height: 1em;
+}
+.template-iso #client-info {
+  float: right;
+  text-align: right;
+  margin-top: 50px;
+  min-width: 220px;
+}
+.template-iso #client-info .client-name {
+  font-weight: bold;
+  font-size: 15px;
+  text-transform: uppercase;
+  margin: 7px 0;
+}
+.template-iso #client-info > div {
+  margin-bottom: 3px;
+  min-width: 20px;
+}
+.template-iso #client-info span {
+  display: block;
+  min-width: 20px;
+}
+.template-iso #client-info > span {
+  text-transform: uppercase;
+  color: #858585;
+  font-size: 15px;
+}
+.template-iso table {
+  table-layout: fixed;
+}
+.template-iso table th,
+.template-iso table td {
+  vertical-align: top;
+  word-break: keep-all;
+  word-wrap: break-word;
+}
+.template-iso #invoice-info {
+  float: left;
+  margin-top: 10px;
+  background: #b0b4b3;
+}
+.template-iso #invoice-info div {
+  margin-bottom: 3px;
+}
+.template-iso #invoice-info div span {
+  display: inline-block;
+  min-width: 20px;
+  min-height: 18px;
+}
+.template-iso #invoice-info div span:first-child {
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-right: 10px;
+}
+.template-iso #invoice-info:after {
+  content: '';
+  display: block;
+  clear: both;
+}
+.template-iso .currency {
+  margin-top: 20px;
+  text-align: right;
+  color: #858585;
+  font-style: italic;
+  font-size: 12px;
+}
+.template-iso .currency span {
+  display: inline-block;
+  min-width: 20px;
+}
+.template-iso #items {
+  margin-top: 10px;
+}
+.template-iso #items .first-cell,
+.template-iso #items table th:first-child,
+.template-iso #items table td:first-child {
+  width: 18px;
+  text-align: right;
+}
+.template-iso #items table {
+  border-collapse: separate;
+  width: 100%;
+}
+.template-iso #items table th {
+  font-family: Sanchez, Serif;
+  font-size: 12px;
+  text-transform: uppercase;
+  padding: 5px 3px;
+  text-align: right;
+  background: #b0b4b3;
+  color: white;
+}
+.template-iso #items table th:nth-child(2) {
+  width: 30%;
+  text-align: left;
+}
+.template-iso #items table th:last-child {
+  text-align: right;
+}
+.template-iso #items table td {
+  padding: 10px 3px;
+  text-align: right;
+  border-bottom: 1px solid #ddd;
+}
+.template-iso #items table td:first-child {
+  text-align: left;
+}
+.template-iso #items table td:nth-child(2) {
+  text-align: left;
+}
+.template-iso #sums {
+  float: right;
+  margin-top: 30px;
+}
+.template-iso #sums table tr th,
+.template-iso #sums table tr td {
+  min-width: 100px;
+  padding: 8px 3px;
+  text-align: right;
+}
+.template-iso #sums table tr th {
+  padding-right: 25px;
+}
+.template-iso #sums table tr.amount-total td {
+  background: #415472;
+  color: white;
+  font-family: Sanchez, Serif;
+  font-size: 35px;
+  line-height: 1em;
+  padding: 7px !important;
+}
+.template-iso #sums table tr.due-amount th,
+.template-iso #sums table tr.due-amount td {
+  font-weight: bold;
+}
+.template-iso #terms {
+  margin-top: 60px;
+}
+.template-iso #terms > span {
+  font-weight: bold;
+  display: inline-block;
+  min-width: 20px;
+  text-transform: uppercase;
+}
+.template-iso #terms > div {
+  min-height: 50px;
+  min-width: 50px;
+}
+.template-iso .payment-info {
+  font-size: 12px;
+  color: #858585;
+  margin-top: 30px;
+}
+.template-iso .payment-info div {
+  min-width: 20px;
+}
+.template-iso .payment-info div:first-child {
+  font-weight: bold;
+}
+.template-iso .ib_invoicebus_fineprint {
+  text-align: left !important;
+  padding-left: 130px !important;
+  width: auto !important;
+}
+@media print {
+  .template-iso {
+    /* Here goes your print styles */
+  }
+}

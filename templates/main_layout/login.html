@@ -1,16 +1,9 @@
 {% extends "main_layout/main_layout.html" %}
 {% block title %}| {{title}} {% endblock %}
 
-{% block link %}
-
-<link href="{{ url_for('static', filename='styles/style1.css') }}" type="text/css" rel="stylesheet">
-
+{% block css_external %}
+    <link href="{{ url_for('static', filename='styles/style1.css') }}" type="text/css" rel="stylesheet">
 {% endblock %}
-
-{% block css %}
-
-{% endblock %}
-
 
 {% block content %}
 
@@ -35,7 +28,7 @@
                     {{ login.remember_me.label }}
                 </div>
                     {{ login.submit(class_="btn btn-success btn-block") }}
-                   
+                  
             </form>  
             <!--form end-->
         </div>

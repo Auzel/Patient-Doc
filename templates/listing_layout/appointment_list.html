@@ -1,48 +1,150 @@
 {% extends "listing_layout/listing_layout.html" %}
 {% block title %}| Appointments {% endblock %}
 
+{% block css_external %}
+    <!-- 
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/bootstrap-4-5-0.css') }}"> 
+{% endblock %}
 
 
 {% block heading %}
-Patient-Doc Medical Institutions
+<div>
+    <button type="button" type="button">Connect via Google</button>
+</div>
+<div>
+    My Appointments
+</div>
 {% endblock %}
 
-{% block sub_heading %}
-List of Medical Institutions currently registered under Patient-Doc:
+{% block sub_heading %} 
+
+    {% if current_user.type=='patient' %}
+        <div class= "bootstrap-4-5-0">
+            <div class="container">	
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="modal fade" id="myModal">
+                            <div class="modal-dialog">
+                                
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h3> Book an Appointment </h3>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form>
+                                            <div class="form-group">
+                                                {{booking.physician_name.label}}
+                                                {{booking.physician_name(class_="form-control")}}
+                                            </div>
+                                            <div class="form-group">
+                                                {{booking.date.label}}
+                                                {{booking.date(class_="form-control")}}
+                                            </div>
+                                            <div class="form-group">
+                                                {{booking.time.label}}
+                                                {{booking.time(class_="form-control")}}
+                                            </div>
+                                        </form>                                    
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary" onclick="addAppointment(event)">Book</button>
+                                        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                    </div>						
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <a href="#" data-toggle="modal" data-target="#myModal">Open Modal </a>
+                    </div>
+                
+                </div>
+            </div> 
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block table_headers %}
-    <th>#</th>
-    <th>Name</th> 
-    <th>Address</th> 
-    <th>Contact</th> 
+    <th>id</th>
+    <th>Patient</th> 
+    <th>Physician</th> 
+    <th>Date & Time</th>  
+    <th>Change</th>
+    <th>Delete</th>
 {% endblock %}
 
 
 {% block table_body %}
-    <tr> 
-        <th scope=row>1</th> 
-        <td>University of CapeTown</td> 
-        <td>Africa</td> 
-        <td>1-868-324-2342</td> 
-    </tr> 
-    <tr> 
-        <th scope=row>2</th> 
-        <td>Witwatersrand</td> 
-        <td>Asia</td> 
-        <td>1-868-324-2342</td> 
-    </tr> 
-    <tr> <th scope=row>3</th> <td>Stellenbosch University</td> <td>North Carolina</td> <td>1-868-324-2342</td> </tr>
-    <tr> <th scope=row>4</th> <td>KwaZulu-Natal</td> <td>Haiti</td> <td>1-868-324-2342</td> </tr> 
-    <tr> <th scope=row>5</th> <td>University of Pretoria</td> <td>Nea Zealand</td> <td>1-868-324-2342</td> </tr> 
-    <tr> <th scope=row>6</th> <td>Northwest </td> <td>England</td> <td>1-868-324-2342</td> </tr> 
-    <tr> <th scope=row>7</th> <td>Sefako Makgatho</td> <td>Mexico</td> <td>1-868-324-2342</td> </tr> 
-    <tr> <th scope=row>8</th> <td>Free State</td> <td>Nigeria</td> <td>1-868-324-2342</td> </tr> 
-    <tr> <th scope=row>9</th> <td>Limpopo</td> <td>Wakanda</td> <td>1-868-324-2342</td> </tr> 
-    <tr> <th scope=row>10</th> <td>Johannesburg</td> <td>Iceland</td> <td>1-868-324-2342</td> </tr> 
-    <tr> <th scope=row>11</th> <td>Western Cape</td> <td>St Kitts</td> <td>1-868-324-2342</td> </tr> 
-    <tr> <th scope=row>12</th> <td>Nelson Mandela</td> <td>Jamaica</td> <td>1-868-324-2342</td> </tr> 
+    {% for appointment in appointments %}
+        <tr id="change"> 
+            <th scope=row>{appointment_record.id}</th> 
+            <td>{appointment_record.patient.fname} {appointment_record.patient.lname}</td> 
+            <td>{appointment_record.physician.fname} {appointment_record.physician.lname}</td>
+            {% if update %} 
+                <td>{appointment_record.date.strftime("%d-%B-%Y %H:%M:%S"}</td> 
+                <td><button type="button" type="button" onclick="/appointments?update=True">Change</button></td>
+            {% else %}
+                <form action="/appointments/{{appointment_record.id}}" method="POST">
+                    <td>{appointment.date()}</td> 
+                    <td><button type="button" type="submit">Submit</button></td>
+                </form>              
+            {%endif%}            
+            <td><button type="button" type="button" onclick="deleteAppointment(appointment_record.id)">Change</button></td>
+        </tr> 
+     {% endfor %}
 {% endblock %}
 
+{% block js_external %}	
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+{% endblock %}
 
+{% block js_internal %}
+    /* We do the follow to create a new appointment */
+    /* We use async function as oppose to query params since it would require alot of query params*/
+  
+    function addAppointment(event){
+        event.preventDefault()
+
+        //get data from form using elements property
+        let myform = event.target.elements;
+
+        let data = {
+            data: myform['date'].value,
+            physician_name: myform['physician_name'].value
+        }
+        //send data to an api endpoint expecting the data
+        postData("{window.location.hostname}/appointments", data);
+        myForm.reset();//clears the fields of the form
+
+    }
+    async function postData(url, data){
+
+        try{
+            let response = await fetch(
+                url, 
+                {
+                    method: 'POST',
+                    body: JSON.stringify(data),//convert data to JSON string
+                    headers: { 'Content-Type':'application/json' }// JSON data
+                },
+            );
+
+            let result = await response.text();//2. Get message from response
+
+        }catch(error){
+            console.log(error);//catch and log any errors
+        }
+    }
+
+    function deleteAppointment(id){
+
+        yes=confirm("Are you sure you want to delete this appointment?")
+        if (yes)
+            location.href = "/appointments/{id}";
+    }
+            
+{% endblock %}
         

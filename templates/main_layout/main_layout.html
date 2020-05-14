@@ -7,22 +7,16 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>Patient-Doc {% block title %} {% endblock %}</title>
     <link rel="icon" href="{{ url_for('static', filename='img/jpg_png/logohead.png') }}">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-	<script src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
-	<link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
-    {% block link%}
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">     
+	<link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}"> 
+    {% block css_external %}
     {% endblock %}
+
+   
     
     <style>       
-        {% block css %}
+        {% block css_internal %}
         {% endblock %}
-        /* body {
-            background: url("img/oldbackground.png") no-repeat;
-            background-size: 100%;
-        } */
     </style>
 
 </head>
@@ -30,8 +24,9 @@
 
 <body>
     
+    <div class="bootstrap-iso">
   <!-- Navigation -->
-    <nav class="navbar navbar-expand-md navbar-light bg-light sticky-top">
+    <nav class="navbar navbar-expand-md navbar-light bg-light sticky-top ">
         <div class="container-fluid">
             <a class="navbar-brand" href="/"><img src="{{ url_for('static', filename='img/jpg_png/logo.png') }} "></a>
             {% if current_user.is_authenticated %}
@@ -42,9 +37,13 @@
             </button>    
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ml-auto">
-    
+                
+                     <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+
                     {% if current_user.is_authenticated %}
-       
+                        
                         <li class="nav-item">
                             <a class="nav-link" href="/profile">Profile</a>
                         </li>
@@ -77,10 +76,6 @@
                     {% else %}  
 
                         <li class="nav-item">
-                            <a class="nav-link" href="/">Home</a>
-                        </li>
-
-                        <li class="nav-item">
                             <a class="nav-link" href="/physicians">All Physicians</a>
                         </li>
                         <li class="nav-item">
@@ -102,7 +97,7 @@
             </div>
         </div>
     </nav>
-
+    </div>
     <main class="narrow">
      
         {% block content %} 
@@ -147,9 +142,16 @@
             </div>    
         </div>    
     </footer>
-    <script>
-        {% block js %}
-            
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+    {% block js_external %}        
+    {% endblock %}
+
+    <script>        
+        {% block js_internal %}        
         {% endblock %}
     </script>
 </body>

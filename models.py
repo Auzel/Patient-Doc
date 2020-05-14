@@ -78,10 +78,13 @@ class Physician(User):
     type1= db.Column(db.String(20), nullable=False)
     degree=db.Column(db.String(20), nullable=False)
     place_of_education=db.Column(db.String(20), nullable=False)
+    license=db.Column(db.String(20), nullable=False)
     med_id=db.Column(db.Integer, db.ForeignKey('med_institution.id'))
     releases=db.relationship('Release_Form', foreign_keys="Release_Form.physician_id", backref='physician', lazy=True)    
     appointments = db.relationship('Appointment', foreign_keys="Appointment.physician_id", backref='physician', lazy=True)##, back_populates="physicians")
     
+
+
     __mapper_args__ = {
         'polymorphic_identity':'physician'
     }
@@ -104,7 +107,7 @@ class Appointment(db.Model):
     
     def toDict(self):
         return {
-            'date': self.date.strftime("%d/%B/%Y %H:%M:%S") 
+            'date': self.date.strftime("%d-%B-%Y %H:%M:%S") 
         }
  
 
@@ -157,5 +160,5 @@ class Release_Form(db.Model):
     def toDict(self):
         return {
             'id':self.id,
-            'date': self.date.strftime("%d/%B/%Y %H:%M:%S")         
+            'date': self.date.strftime("%d-%B-%Y %H:%M:%S")         
         }

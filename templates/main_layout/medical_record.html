@@ -1,122 +1,83 @@
 {% extends "main_layout/main_layout.html" %}
 {% block title %}| Medical Record {% endblock %}
 
-{% block link%}
-      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/template.css') }} ">
+{% block css_external%}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/template-iso.css') }} ">
 {% endblock %}
 
 
 {% block content %}
-   
-    <div id="container">
-        <div class="left-stripes">
-            <div class="circle c-upper"></div>
-            <div class="circle c-lower"></div>
-        </div>
-             
-        <div class="right-invoice">
-            <section id="memo">  
-                <div class="logo">
-                    <img src="{{ url_for('static', filename='img/jpg_png/patient.jpg') }} " alt="Patient Picture"/>
-                </div>
-            </section>
-
-            <section id="invoice-title-number">
-
-                <div class="title-top">
-                    <span class="x-hidden">{issue_date_label}</span>
-                    <span><p>Blood Type: O</p></span> 
-                    <span id="number">Weight: 189lbs</span>
-                </div>
-                
-                <div id="title">Johnson M Richards</div>
-          
-            </section>
-
-            <section id="client-info">
-                <div class="client-name">
-                    <span>Residence of Johnson and Denise Reichards</span>
-                </div>
-            
-                <div>
-                    <span>3rd Street, James Avenue</span>
-                </div>
-                
-                <div>
-                    <span>Port of Spain</span>
-                </div>
-            
-                <div>
-                    <span>1-868-375-2843</span>
-                </div>
-            
-                <div>
-                    <span>johnsonrichards@gmail.com</span>
-                </div>
-            
-                <div>
-                    <span></span>
-                </div>
-            </section>
-        
-            <div class="clearfix"></div>
-        
-            <section id="invoice-info">
-                <div>
-                    <span><p>Conditions: High blood pressure, diabetes, lung cancer, coronavirus, underlying health conditions</p></span>
-                </div>
-                <div>
-                    <span>Current Treatment: Antibiotics, Kimotherapy, Tablets, Blood transfer</span>
-                </div>
-                <div>
-                    <span>Medical history: Has fainted before, seizures in 2018, low blood</span>
-                </div>
-            </section>
-        
-            <div class="clearfix"></div>        
-      
-            <section id="sums">
-            
-                <table cellpadding="0" cellspacing="0">
-                    <tr class="amount-total">
-                        <!-- {amount_total_label} -->
-                        <td colspan="2">$1,452.58 XCD</td>
-                    </tr>                    
-                    
-                    
-                    <!-- You can use attribute data-hide-on-quote="true" to hide specific information on quotes.
-                            For example Invoicebus doesn't need amount paid and amount due on quotes  -->
-                        
-                    <tr data-hide-on-quote="true" class="due-amount">
-                        <th>Balance due</th>
-                    </tr>
-                    
-                </table>
-          
-            </section>
-        
-            <div class="clearfix"></div>
-            
-            <section id="terms">
-            
-                <span>Confidentiality information</span>
-                <div>More confidentiality information</div>
-                
-            </section>
-
-            <div class="payment-info">
-                <div>
-                    Some confidentiality. The following terminology applies to these Terms and Conditions, Privacy Statement and 
-                    Disclaimer Notice and all Agreements: “Client”, “You” and “Your” refers to you, the person log on this website 
-                    and compliant to the Company's terms and conditions. “The Company”, “Ourselves”, “We”, “Our” and “Us”, refers 
-                    to our Company. “Party”, “Parties”, or “Us”, refers to both the Client and ourselves. All terms refer to the offer, 
-                    acceptance and consideration of payment necessary to undertake the process of our assistance to the Client in the most 
-                    appropriate manner for the express purpose of meeting the Client's needs in respect of provision of the Company's stated 
-                    services, in accordance with and subject to, prevailing law of Netherlands. Any use of the above terminology or other words 
-                    in the singular, plural, capitalization and/or he/she or they, are taken as interchangeable and therefore as referring to 
-                    same.
-                </div>
+    <div class="template-iso">
+        <div id="container">
+            <div class="left-stripes">
+                <div class="circle c-upper"></div>
+                <div class="circle c-lower"></div>
             </div>
+            
+            {% if med_record%}
+                <div class="right-invoice">
+                    <section id="memo">  
+                        <div class="logo">
+                            <img src="{{ url_for('static', filename='img/jpg_png/patient.jpg') }} " alt="Patient Picture"/>
+                        </div>
+                    </section>
+
+                    <section id="invoice-title-number">
+                    
+                        <div id="title">{{med_record.patient.fname}} {{med_record.patient.lname}}</div>
+
+                        <div class="title-bottom">
+                            <span id="number">Date of Birth: {{med_record.patient.date_of_birth.strftime("%d-%B-%Y") }}</span>
+                        </div>
+                
+                    </section>
+
+                    <section id="client-info">
+                        <div class="client-name">
+                            <span>Address</span>
+                        </div>
+                    
+                        <div>
+                            <span>{{med_record.patient.address}}</span>
+                        </div>
+                        
+                        <div>
+                            <span>{{med_record.patient.email}}</span>
+                        </div>
+                    
+                        <div>
+                            <span></span>
+                        </div>
+                    </section>
+                
+                    <div class="clearfix"></div>
+                
+                    <section id="invoice-info">
+                        <div>
+                            <span><p>Current problem: {{med_record.current_problem}}</p></span>
+                        </div>
+                        <div>
+                            <span>Current Treatment: {{med_record.current_treatment}}</span>
+                        </div>
+                        <div>
+                            <span>Medical history: {{med_record.history}}</span>
+                        </div>
+                    </section>
+                
+                    
+                    <section id="terms">
+                    
+                        <span>Confidentiality information</span>
+                        <div>
+                            <p>This medical information cannot be edited, copied or redistributed without express consent from the patient.
+                            Failure to do so can and shall result in legal action being taken against all parties involved.
+                        </div>
+                        
+                    </section>
+
+                </div>
+            {%else %}
+            {%endif%}
         </div>
     </div>
 

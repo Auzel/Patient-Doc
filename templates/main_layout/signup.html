@@ -1,8 +1,8 @@
 {% extends "main_layout/main_layout.html" %}
 {% block title %}| {{title}} {% endblock %}
 
-{% block link %}
-<link href="{{ url_for('static', filename='styles/style2.css') }}" type="text/css" rel="stylesheet">
+{% block css_external %}
+    <link href="{{ url_for('static', filename='styles/style2.css') }}" type="text/css" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -17,7 +17,7 @@
             <h1>Sign Up</h1>
             <div class="form-group">
                 {{ signup.name.label }}
-                {{ signup.name(class_="form-control") }}
+                {{ signup.name(class_="form-control", placeholder= "John Doe") }}
             </div>
             <div class="form-group">
                 {{ signup.address.label }}
@@ -55,7 +55,7 @@
 
 {% endblock %}
 
-{% block js %}
+{% block js_internal %}
     typeInput = document.querySelector('#type')
     
     typeInput.addEventListener('change',(event)=>{

@@ -1,11 +1,9 @@
 {% extends "main_layout/main_layout.html" %}
 {% block title %}| {{user.name}}'s Profile {% endblock %}
 
-{% block link %}
+{% block css_external %}
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-	<link href="{{ url_for('static', filename='styles/style3.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='styles/style3.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -31,8 +29,8 @@
                     <!-- END SIDEBAR USER TITLE -->
                     <!-- SIDEBAR BUTTONS -->
                     <div class="profile-userbuttons">
-                        <button type="button" class="btn btn-success btn-sm">Make appointment</button>
-                        <button type="button" class="btn btn-danger btn-sm">Smn else</button>
+                        <button type="button" class="btn btn-success btn-sm" onclick="location.href='/profile?update=True'" type="button">Update </button>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="deletes()" type="button">Delete</button>
                     </div>
                     <!-- END SIDEBAR BUTTONS -->
                     <!-- SIDEBAR MENU -->
@@ -66,24 +64,56 @@
             <div class="col-md-9">
                 <div class="profile-content">
                     {% if user %}
-
-                        <p>{{user.type}}</p>
-                        <p> {{user.fname}}  {{user.lname}}</p></p>
-                        <p>{{user.email}}</p>
-                        <p>password*******</p>
-                        <p>{{user.date_of_birth.strftime("%d-%B-%Y")}}</p>
-                        <p>{{user.address}}</p>
-                        {% if user.type == 'physician' %}                   
-                            <p>{{user.physician_type}}</p>
-                            <p>{{user.degree}}</p>
-                            <p>{{user.place_of_education}}</p>
-                            <p>license ----picture----</p>
-                            <p>{{user.med_key}}</p>
+                        {% if not update %}                            
+                            <p>{{basic.name.label}}: {{user.fname}}  {{user.lname}}</p>
+                            <p>{{basic.type.label}}: {{user.type}}</p>                        
+                            <p>{{basic.email.label}}: {{user.email}}</p>
+                            <p>{{basic.password.label}}:  *******</p>
+                            <p>{{basic.DOB.label}}: {{user.date_of_birth.strftime("%d-%B-%Y")}}</p>
+                            <p>{{basic.address.label}}:  {{user.address}}</p>
+                            {% if user.type == 'physician' %}                   
+                                <p>{{extra.type.label}}: {{user.physician_type}}</p>
+                                <p>{{extra.degree.label}}: {{user.degree}}</p>
+                                <p>{{extra.place_of_education.label}}: {{user.place_of_education}}</p>
+                                <p>{{extra.license.label}}: license</p>
+                                <p>{{extra.med_key.label}}: {{user.med_key}}</p>
+                            {% endif %}
+                        {% else %} 
+                            <form action="/profile" method="POST"> 
+                                <p>{{basic.name.label}}: {{user.fname}}  {{user.lname}}</p>
+                                <p>{{basic.type.label}}: {{user.type}}</p>                        
+                                <p>{{basic.email.label}}: {{basic.email(value=user.email)}}</p>
+                                <p>{{basic.password.label}}:  {{basic.password()}}</p>
+                                <p>{{basic.DOB.label}}: {{basic.DOB(value=user.date_of_birth)}}</p>
+                                <p>{{basic.address.label}}:  {{basic.address(value=user.address)}}</p>
+                                {% if user.type == 'physician' %}                   
+                                    <p>{{extra.type.label}}: {{extra.physician_type(value=user.physician_type)}}</p>
+                                    <p>{{extra.degree.label}}: {{extra.degree(value=user.degree)}}</p>
+                                    <p>{{extra.place_of_education.label}}: {{extra.place_of_education(value=user.place_of_education)}}</p>
+                                    <p>{{extra.med_key.label}}: {{extra.med_key(value=user.med_key)}}</p>
+                                {% endif %}
+                                <input type="submit" value="save" class="btn btn-success btn-block">
+                            </form>
                         {% endif %}
                     {% endif %}
                 </div>
             </div>
         </div>
     </div>
-    
+
+{% endblock %}
+
+{% block js_external %}
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+{% endblock %}
+
+{% block js_internal %}
+
+    function deletes(){
+        yes=confirm("Are you sure you want to delete your account?")
+        if (yes)
+            location.href = "/delete";
+    }
+        
 {% endblock %}

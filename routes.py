@@ -3,20 +3,18 @@ from flask import Blueprint, request, redirect, render_template, flash, url_for,
 from flask_login import current_user, login_user, logout_user, login_required
 from sqlalchemy.exc import IntegrityError
 from models import db, Med_Institution, User, Physician, Patient, Appointment, Med_Record, Release_Form
-from forms import Login, SignUp, Physician_SignUp
+from forms import Login, SignUp, Physician_SignUp, Booking
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-
 import datetime
 import os
-api = Blueprint('api', __name__)
 
 UPLOAD_FOLDER = './static/img/user_uploads'
 
 
-## consider when doctor or patient deleted, is it deleted from other tables
+api = Blueprint('api', __name__)
 
-##remember to configure flash cards
+    
 
 
 @api.route('/')
@@ -26,6 +24,8 @@ def index():
         user=current_user
         if user.num_visits==0:
             user.num_visits+=1
+            db.session.add(user)
+            db.session.commit()
             return redirect(url_for('.profile'))
     return render_template('/main_layout/home.html', user=user,  title="Home") 
 
@@ -44,6 +44,7 @@ def signup():
         type = data['type']
 
         if type == 'physician' and not physician_signup.validate_on_submit():
+            flash("Please fill in all the fields.")
             return redirect(request.url)
                    
         names = data['name'].split()
@@ -116,6 +117,7 @@ def login():
             return redirect(url_for('.login')) 
     return render_template('/main_layout/login.html', login=login,  title="Login")
 
+
 @api.route('/logout')
 @login_required
 def logout():
@@ -127,14 +129,19 @@ def logout():
 @api.route('/profile',methods=['GET','POST'])
 @login_required
 def profile():
+    basic = SignUp()
+    extra = Physician_SignUp()
     user=None
     if current_user.type == 'patient':
         user=Patient.query.get(current_user.id)
     else: ##current_user.type == 'physician':
         user=Physician.query.get(current_user.id)
     
-    if request.method == 'GET':
-        return render_template('/main_layout/profile.html', user=user,  title="Profile")
+
+    update=request.args.get('update')
+    if request.method == 'GET' :
+        return render_template('/main_layout/profile.html', title="Profile", basic=basic, extra=extra, user=user, update=update )
+
 
     else: ## request.method == 'POST' for Updating profile:
         data = request.form
@@ -160,41 +167,82 @@ def profile():
                 user.degree=data['degree']
             if 'education' in data:
                 user.education = data['education'] 
-        
-        db.session.add(user)
-        db.session.commit()        ## ask are you sure in javascript
-        flash("Profile Updated.")
-        return redirect(url_for('.profile'))
 
+
+    if (user.type == 'patient' and  basic.validate_on_submit()) or (user.type == 'patient' and extra.validate_on_submit()):          
+        data=request.form
+        
+        ##patient section
+        if 'email' in data: 
+            user.email = data['email']
+        if 'password' in data:
+            if len(data['password']) >= 7 and len(data['password'])<=20:
+                user.set_password(data['password'])
+        if 'DOB' in data:
+            DOB = datetime.datetime.strptime(data['DOB'],"%Y-%m-%d")
+            user.date_of_birth=DOB           
+        if 'address' in data:
+            user.address = data['address']
+
+        ##physician section
+        if user.type == 'physician':
+            if 'type1' in data:
+                user.type1=data['type1']
+            if 'degree' in data:
+                user.degree=data['degree']
+            if 'place_of_education' in data:
+                user.education = data['place_of_education'] 
+            if 'med_key' in data:
+                user.med_key = data['med_key']
+
+         ## note above that name, type nor medical license can be changed                        
+
+        try:
+            db.session.add(user) # save new user
+            db.session.commit()
+        except IntegrityError as e : # attempted to insert a duplicate user
+            print('problem: ',e)
+            db.session.rollback()
+            flash('Email already exists')
+            return redirect(url_for('.signup'))
+        flash('Profile Updated.')
+    else:
+        flash("Update couldn't be completed. Please ensure you have inputted valid data.")
+    return redirect(url_for('.profile'))
     
 ## This method deals with deletion of a user account.
 @api.route('/delete')
+@login_required
 def delete_user():
     user=User.query.get(current_user.id)
-    name=user.name
+    name=user.fname + " " + user.lname
     db.session.delete(user)
     db.session.commit()
+    logout_user()
     flash(f"{name} has been successfully deleted.")
-    return redirect('.logout')
+    return redirect(url_for('.index'))
+
         
 
 ## this method is to allow a physician to be able to see all of their patients. If a patient uses this url, they are redirected to their profile
 @api.route('/patients/<id>')
 @login_required
 def get_patient(id):
-    
-    if current_user.id==id and current_user.type=='patient':
+    patient=None
+
+    basic = SignUp()
+    extra = Physician_SignUp()
+
+    if str(current_user.id)==id and current_user.type=='patient':
         return redirect(url_for('.profile'))
 
     elif current_user.type=='physician':
-        patient=None
         appointment=Appointment.query.filter_by(physician_id=current_user.id, patient_id=id).first()
         if appointment:
             patient=appointment.patient
-        else:
-            flash("Invalid patient.")
+            return render_template('/main_layout/profile.html', title="Profile", basic=basic, extra=extra, user=patient, update='false')
 
-    return render_template('/main_layout/profile.html', user=patient)
+    return redirect(url_for('.unauthorized'))
 
 
 ##This method allows a patient to view and create their medical record. If exists, patient or physician may edit the medical records in distinct ways.
@@ -205,7 +253,7 @@ def medical_record(id):
 
     if request.method =='POST':
         data = request.form
-        if current_user.type=='patient' and current_user.id==id:  
+        if current_user.type=='patient' and str(current_user.id)==id:  
             ## checking if medical_record for patient already exists
             med_record = Med_Record.query.filter_by(patient_id=current_user.id).first()
             if not med_record:
@@ -246,57 +294,31 @@ def medical_record(id):
         return redirect(url_for('.medical_record'))         ##come back and deal with logic to 
 
     else: ## if GET request
-        med_record=None
-        if current_user.type=='patient' and current_user.id==id:            
+
+        med_record= None
+        if current_user.type=='patient' and str(current_user.id)==id:            
             med_record=Med_Record.query.filter_by(patient_id=current_user.id).first()
         elif current_user.type=='physician' and Release_Form.query.filter_by(physician_id=current_user.id, patient_id=id).first():
             med_record = Med_Record.query.filter_by(patient_id=id).first()
-        if med_record is None:            
-            flash ("You are not authorized to perform this action.")              
+        ##if med_record is None:            
+            ##return redirect(url_for('.unauthorized'))   
+       
         return render_template('/main_layout/medical_record.html',med_record=med_record)  # do logic and check if med_records
 
-
-
-    '''
-    else:
-        
-        if request.method == 'PUT':
-            data = request.form
-            if current_user.type=='patient' and current_user.id==id:    
-                if 'current_problem' in data:                
-                    current_problem = data['current_problem'] 
-
-                    med_record = Med_Record.query.filter_by(patient_id=current_user.id).first  #med record must exist since it is created at signup
-                    med_record.history+="\nPast Problem: "+med_record.current_problem+"\n"
-                    med_record.current_problem = current_problem
-                    db.session.add(med_record)
-                    db.session.commit()
-                    flash('Medical Record has been updated.')
-                    
-
-            elif current_user.type=='physician' and Appointment.query.filter_by(physician_id=current_user.id, patient_id=id).first():
-                if 'current_treatment' in data:
-                    current_treatment=data['current_treatment'] 
-                    med_record = Med_Record.query.filter_by(patient_id=id).first()
-                    med_record.history += "\n Past Treament: " + med_record.current_treatment+"\n"
-                    med_record.treatment = current_treatment
-                    db.session.add(med_record)
-                    db.session.commit()
-                    flash('Medical Record has been updated')
-                else:
-                    flash('No treatment entered to be updated.')
-            else:
-                flash ('Cannot update Medical Record. You are not authorized to perform this action.')
-            return redirect(url_for('.medical_record'))
-    '''
 ## We will use query parameters to achieve Retrieval for various appointments for a user
 @api.route('/appointments', methods=['GET','POST'])
 @login_required
 def appointments():
 
+    booking = Booking()
+
     if request.method == 'POST': ##create new appointment
         data = request.form
-        date = datetime.datetime.strptime(data['date'],"%Y-%m-%d %H:%M:%S")
+        date = datetime.datetime.strptime(data['date'],"%Y-%m-%d")
+        time = datetime.datetime.strptime(data['date'],"%H:%M:%S")
+
+        ##overrite date to include time
+        date = datetime.datetime.combine(date,time)
         ## only a patient can set an appointment
         if current_user.type=='patient':
             appointment = Appointment(physician_id=data['physician_id'], patient_id=data['patient_id'], date = date)
@@ -310,7 +332,8 @@ def appointments():
         return redirect(url_for('.appointments'))
         
     else: ## get appointments based on query params
-        
+        update=request.args.get('update') ## store if update was requeted
+
         date = request.args.get('date') 
         if date:
             valid_date=True
@@ -351,7 +374,7 @@ def appointments():
             else:
                 appointments = Physician.query.get(current_user.id).appointments ## come back and order by newest
 
-        return render_template('/listing_layout/appointment_list.html',appointment=appointments)
+        return render_template('/listing_layout/appointment_list.html',appointment=appointments, update=update, booking=booking)
 
 
 ## Besides viewing, a patient can change and delete appointments; whereas, a physician can only  change appoinments
@@ -386,7 +409,7 @@ def appointment(id):
                 flash("Appointment has been cancelled.")
             elif delete=='True':
                 flash('Cannot delete an Appointment. You are not authorized to perform this action.')
-                return redirect(url_for('.unauthorize'))
+                return redirect(url_for('.unauthorized'))
             else:
                 flash('Nothing to be done.')
                
@@ -398,18 +421,6 @@ def appointment(id):
 
 
         
-
-
-'''
-@api.route('/physicians/<id>/appointments')
-@login_required
-def get_physician_appointment(id):
-    appointments=None
-    if current_user.type=='physician' and current_user.id==id :
-        appointments = Physician.query.get(id).appointments
-    return render_template('/users_layout/appointment_list.html',appointment=appointments)
-'''
-
 
 @api.route('/my_physicians')
 @login_required
@@ -460,13 +471,6 @@ def get_med_institutions():
     med_institutions = Med_Institution.query.all()
     return render_template('/listing_layout/med_institution_list.html',med_institutions=med_institutions)
 
-'''
-@api.route('/med_institutions/<id>')
-def get_med_institution(id):
-    med_institution = Med_Institution.query.get(id)
-    return render_template('/users_layout/med_institution.html',med_institution=med_institution)
-'''
-
 ## This method allows for the viewing of release forms for both physicians and patients.
 @api.route('/release_forms')
 @login_required
@@ -495,7 +499,7 @@ def cancel_releases():
                 ##check if above works I just need the descending of records to occur
 
                 #only allow deletion if past appointment date
-                if datetime.datetime.utcnow() > date: 
+                if datetime.datetime.now() > date: 
                     db.session.delete(release_form)
                     db.session.commit()
                     flash("Doctor is no longer able to view your medical Records.") ##Specify doctor name later
@@ -505,7 +509,7 @@ def cancel_releases():
                 flash("Release Agreement does not exists.")
             return url_for('.get_releases')
         else:
-            return redirect(url_for('.unauthorize'))
+            return redirect(url_for('.unauthorized'))
     else: ##show all release
         return url_for('.get_releases')
 
@@ -514,3 +518,6 @@ def cancel_releases():
 def get_about():
     return render_template('/main_layout/about.html', title="About Us")
 
+@api.route('/unauthorized')
+def unauthorized():
+    return render_template('/error_handling/unauthorized.html'),401
