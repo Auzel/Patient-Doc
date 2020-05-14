@@ -2,100 +2,104 @@
 {% block title %}| {{user.name}}'s Profile {% endblock %}
 
 {% block css_external %}
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    -->
+    <link href="{{ url_for('static', filename='styles/bootstrap-3-3-0.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='styles/style3.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
-   
-    <div class="container">
-        <div class="row profile">
-            <div class="col-md-3">
-                <div class="profile-sidebar">
-                    <!-- SIDEBAR USERPIC -->
-                    <div class="profile-userpic">
-                        <img src="https://static.change.org/profile-img/default-user-profile.svg" class="img-responsive" alt="">
-                    </div>
-                    <!-- END SIDEBAR USERPIC -->
-                    <!-- SIDEBAR USER TITLE -->
-                    <div class="profile-usertitle">
-                        <div class="profile-usertitle-name">
-                            {{user.fname}}  {{user.lname}}
+
+    <div class="bootstrap-3-3-0">   
+        <div class="container">
+            <div class="row profile">
+                <div class="col-md-3">
+                    <div class="profile-sidebar">
+                        <!-- SIDEBAR USERPIC -->
+                        <div class="profile-userpic">
+                            <img src="https://static.change.org/profile-img/default-user-profile.svg" class="img-responsive" alt="">
                         </div>
-                        <div class="profile-usertitle-job">
-                            {{user.type}}
+                        <!-- END SIDEBAR USERPIC -->
+                        <!-- SIDEBAR USER TITLE -->
+                        <div class="profile-usertitle">
+                            <div class="profile-usertitle-name">
+                                {{user.fname}}  {{user.lname}}
+                            </div>
+                            <div class="profile-usertitle-job">
+                                {{user.type}}
+                            </div>
                         </div>
+                        <!-- END SIDEBAR USER TITLE -->
+                        <!-- SIDEBAR BUTTONS -->
+                        <div class="profile-userbuttons">
+                            <button type="button" class="btn btn-success btn-sm" onclick="location.href='/profile?update=True'" type="button">Update </button>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="deletes()" type="button">Delete</button>
+                        </div>
+                        <!-- END SIDEBAR BUTTONS -->
+                        <!-- SIDEBAR MENU -->
+                        <div class="profile-usermenu">
+                            <ul class="nav">
+                                <li class="active">
+                                    <a href="/">
+                                    <i class="glyphicon glyphicon-home"></i>
+                                    Overview </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                    <i class="glyphicon glyphicon-user"></i>
+                                    Account Settings </a>
+                                </li>
+                                <li>
+                                    <a href="#" target="_blank">
+                                    <i class="glyphicon glyphicon-ok"></i>
+                                    Tasks </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                    <i class="glyphicon glyphicon-flag"></i>
+                                    Help </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- END MENU -->
                     </div>
-                    <!-- END SIDEBAR USER TITLE -->
-                    <!-- SIDEBAR BUTTONS -->
-                    <div class="profile-userbuttons">
-                        <button type="button" class="btn btn-success btn-sm" onclick="location.href='/profile?update=True'" type="button">Update </button>
-                        <button type="button" class="btn btn-danger btn-sm" onclick="deletes()" type="button">Delete</button>
-                    </div>
-                    <!-- END SIDEBAR BUTTONS -->
-                    <!-- SIDEBAR MENU -->
-                    <div class="profile-usermenu">
-                        <ul class="nav">
-                            <li class="active">
-                                <a href="/">
-                                <i class="glyphicon glyphicon-home"></i>
-                                Overview </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                <i class="glyphicon glyphicon-user"></i>
-                                Account Settings </a>
-                            </li>
-                            <li>
-                                <a href="#" target="_blank">
-                                <i class="glyphicon glyphicon-ok"></i>
-                                Tasks </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                <i class="glyphicon glyphicon-flag"></i>
-                                Help </a>
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- END MENU -->
                 </div>
-            </div>
-            <div class="col-md-9">
-                <div class="profile-content">
-                    {% if user %}
-                        {% if not update %}                            
-                            <p>{{basic.name.label}}: {{user.fname}}  {{user.lname}}</p>
-                            <p>{{basic.type.label}}: {{user.type}}</p>                        
-                            <p>{{basic.email.label}}: {{user.email}}</p>
-                            <p>{{basic.password.label}}:  *******</p>
-                            <p>{{basic.DOB.label}}: {{user.date_of_birth.strftime("%d-%B-%Y")}}</p>
-                            <p>{{basic.address.label}}:  {{user.address}}</p>
-                            {% if user.type == 'physician' %}                   
-                                <p>{{extra.type.label}}: {{user.physician_type}}</p>
-                                <p>{{extra.degree.label}}: {{user.degree}}</p>
-                                <p>{{extra.place_of_education.label}}: {{user.place_of_education}}</p>
-                                <p>{{extra.license.label}}: license</p>
-                                <p>{{extra.med_key.label}}: {{user.med_key}}</p>
-                            {% endif %}
-                        {% else %} 
-                            <form action="/profile" method="POST"> 
+                <div class="col-md-9">
+                    <div class="profile-content">
+                        {% if user %}
+                            {% if not update %}                            
                                 <p>{{basic.name.label}}: {{user.fname}}  {{user.lname}}</p>
                                 <p>{{basic.type.label}}: {{user.type}}</p>                        
-                                <p>{{basic.email.label}}: {{basic.email(value=user.email)}}</p>
-                                <p>{{basic.password.label}}:  {{basic.password()}}</p>
-                                <p>{{basic.DOB.label}}: {{basic.DOB(value=user.date_of_birth)}}</p>
-                                <p>{{basic.address.label}}:  {{basic.address(value=user.address)}}</p>
+                                <p>{{basic.email.label}}: {{user.email}}</p>
+                                <p>{{basic.password.label}}:  *******</p>
+                                <p>{{basic.DOB.label}}: {{user.date_of_birth.strftime("%d-%B-%Y")}}</p>
+                                <p>{{basic.address.label}}:  {{user.address}}</p>
                                 {% if user.type == 'physician' %}                   
-                                    <p>{{extra.type.label}}: {{extra.physician_type(value=user.physician_type)}}</p>
-                                    <p>{{extra.degree.label}}: {{extra.degree(value=user.degree)}}</p>
-                                    <p>{{extra.place_of_education.label}}: {{extra.place_of_education(value=user.place_of_education)}}</p>
-                                    <p>{{extra.med_key.label}}: {{extra.med_key(value=user.med_key)}}</p>
+                                    <p>{{extra.type.label}}: {{user.physician_type}}</p>
+                                    <p>{{extra.degree.label}}: {{user.degree}}</p>
+                                    <p>{{extra.place_of_education.label}}: {{user.place_of_education}}</p>
+                                    <p>{{extra.license.label}}: license</p>
+                                    <p>{{extra.med_key.label}}: {{user.med_key}}</p>
                                 {% endif %}
-                                <input type="submit" value="save" class="btn btn-success btn-block">
-                            </form>
+                            {% else %} 
+                                <form action="/profile" method="POST"> 
+                                    <p>{{basic.name.label}}: {{user.fname}}  {{user.lname}}</p>
+                                    <p>{{basic.type.label}}: {{user.type}}</p>                        
+                                    <p>{{basic.email.label}}: {{basic.email(value=user.email)}}</p>
+                                    <p>{{basic.password.label}}:  {{basic.password()}}</p>
+                                    <p>{{basic.DOB.label}}: {{basic.DOB(value=user.date_of_birth)}}</p>
+                                    <p>{{basic.address.label}}:  {{basic.address(value=user.address)}}</p>
+                                    {% if user.type == 'physician' %}                   
+                                        <p>{{extra.type.label}}: {{extra.physician_type(value=user.physician_type)}}</p>
+                                        <p>{{extra.degree.label}}: {{extra.degree(value=user.degree)}}</p>
+                                        <p>{{extra.place_of_education.label}}: {{extra.place_of_education(value=user.place_of_education)}}</p>
+                                        <p>{{extra.med_key.label}}: {{extra.med_key(value=user.med_key)}}</p>
+                                    {% endif %}
+                                    <input type="submit" value="save" class="btn btn-success btn-block">
+                                </form>
+                            {% endif %}
                         {% endif %}
-                    {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
