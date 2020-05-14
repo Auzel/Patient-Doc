@@ -18,7 +18,7 @@ class SignUp(FlaskForm):
     password = PasswordField('Password', render_kw={"placeholder": "Atleast 7 characters"}, validators=[InputRequired("Please enter your password."), 
                 validators.Length(min=7, max=20,message="Password must be between 7 to 20 characters."), EqualTo('confirm_password', message='Passwords must match.')])
     confirm_password = PasswordField('Confirm Password', validators=[InputRequired("Please re-enter your password.")] )
-    DOB = DateField('Date of Birth', format='%Y-%m-%d',validators=[DataRequired("Please enter your date of birth.")])
+    DOB = DateField('Date of Birth',render_kw={"placeholder": "dd/mm/yy"}, format='%Y-%m-%d',validators=[DataRequired("Please enter your date of birth.")])
     address = StringField('Address', validators=[InputRequired("Please enter your address."), validators.Length(max=50)])
     type = SelectField('User Type', choices=[('patient', 'Patient'), ('physician', 'Physician')] )
     submit = SubmitField('Sign Up')
