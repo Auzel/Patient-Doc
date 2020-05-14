@@ -46,7 +46,7 @@ class Physician_SignUp(FlaskForm):
 class Booking(FlaskForm):
     date=DateField('Date', format='%Y-%m-%d',render_kw={"placeholder": "dd/mm/yyyy"}, default=datetime.datetime.now().date(), validators=[InputRequired("Please enter the new appointment date.")])
     time=TimeField('Time', render_kw={"placeholder": "HH:MM"}, validators=[DataRequired("Please enter the new appointment time.")])
-    physician_name = StringField("Physician's Name", validators=[InputRequired("Please enter the name of your physician.")])
+    physician_email = StringField("Physician's Email", validators=[InputRequired("Please enter the email of your physician."), validators.Length(max=50), Email()])
 
     def validate_time(form, field):
         timeformat = "%H:%M"

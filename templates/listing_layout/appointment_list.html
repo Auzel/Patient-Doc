@@ -32,11 +32,12 @@
                                     <div class="modal-header">
                                         <h3> Book an Appointment </h3>
                                     </div>
-                                    <div class="modal-body">
-                                        <form>
+                                    <form onsubmit="addAppointment(event)">
+                                        <div class="modal-body">
+                                            
                                             <div class="form-group">
-                                                {{booking.physician_name.label}}
-                                                {{booking.physician_name(class_="form-control")}}
+                                                {{booking.physician_email.label}}
+                                                {{booking.physician_email(class_="form-control")}}
                                             </div>
                                             <div class="form-group">
                                                 {{booking.date.label}}
@@ -46,17 +47,18 @@
                                                 {{booking.time.label}}
                                                 {{booking.time(class_="form-control")}}
                                             </div>
-                                        </form>                                    
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="submit" class="btn btn-primary" onclick="addAppointment(event)">Book</button>
-                                        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                                    </div>						
+                                                                            
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-primary">Book</button>
+                                            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </form>						
                                 </div>
                                 
                             </div>
                         </div>
-                        <a href="#" data-toggle="modal" data-target="#myModal">Open Modal </a>
+                        <a href="#" data-toggle="modal" data-target="#myModal">Book An Appointment </a>
                     </div>
                 
                 </div>
@@ -106,18 +108,24 @@
     /* We use async function as oppose to query params since it would require alot of query params*/
   
     function addAppointment(event){
-        event.preventDefault()
-
+        event.preventDefault();
+    
         //get data from form using elements property
+        let form = event.target
         let myform = event.target.elements;
-
+        
         let data = {
-            data: myform['date'].value,
-            physician_name: myform['physician_name'].value
+            date: myform['date'].value,
+            time: myform['time'].value, 
+            physician_email: myform['physician_email'].value
         }
+        console.log(data)
         //send data to an api endpoint expecting the data
-        postData("{window.location.hostname}/appointments", data);
-        myForm.reset();//clears the fields of the form
+        console.log(myform)
+        form.reset();//clears the fields of the form
+        console.log(window.location.hostname)
+        postData("/appointments", data);
+        
 
     }
     async function postData(url, data){

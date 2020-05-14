@@ -68,8 +68,10 @@ def signup():
         elif type=='physician':
             ##deal with dereference key to an integer
             ##remember to add med_id to variable
+            ## change license
+            license=""
             user = Physician(fname = fname, lname=lname, email=data['email'], address=data['address'], date_of_birth=DOB,
-            type1=data['physician_type'], degree=data['degree'],place_of_education = data['place_of_education'] ) 
+            type1=data['physician_type'], degree=data['degree'],place_of_education = data['place_of_education'],license=license ) 
 
             ##Store MedicalFile
             file = request.files['license']        
@@ -313,20 +315,31 @@ def appointments():
     booking = Booking()
 
     if request.method == 'POST': ##create new appointment
-        data = request.form
-        date = datetime.datetime.strptime(data['date'],"%Y-%m-%d")
-        time = datetime.datetime.strptime(data['date'],"%H:%M:%S")
-
-        ##overrite date to include time
+        data = request.json
+        print(data)
+        date = datetime.datetime.strptime(data['date'],"%Y-%m-%d").date()
+        time = datetime.datetime.strptime(data['time'],"%H:%M").time()
         date = datetime.datetime.combine(date,time)
+
+        physician_email=data['physician_email']
+        physician_id=None
+        physician=Physician.query.filter_by(email=physician_email).first()
+        if physician:
+            physician_id=physician.id
+        print("1/2 sucess")
+        ##overrite date to include time
+        
         ## only a patient can set an appointment
-        if current_user.type=='patient':
-            appointment = Appointment(physician_id=data['physician_id'], patient_id=data['patient_id'], date = date)
-            release_form = Release_Form(physician_id=data['physician_id'], patient_id=data['patient_id'])       #when create an appointent you must sign release form
+        if current_user.type=='patient' and physician_id:
+            appointment = Appointment(physician_id=physician_id, patient_id=current_user.id, date = date)
+            release_form = Release_Form(physician_id=physician_id, patient_id=current_user.id)       #when create an appointent you must sign release form
             db.session.add(appointment)
             db.session.add(release_form)
-            db.commit()
+            db.session.commit()
             flash(f"Appointment has been set to {data['date']}")
+            print("success")
+        elif current_user.type=='patient':
+            flash('Cannot set an Appointment. There is no physician registered with that email.')
         else:
             flash('Cannot set an Appointment. You are not authorized to perform this action.')
         return redirect(url_for('.appointments'))
