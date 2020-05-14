@@ -18,7 +18,7 @@ class SignUp(FlaskForm):
     password = PasswordField('Password', render_kw={"placeholder": "Atleast 7 characters"}, validators=[InputRequired("Please enter your password."), 
                 validators.Length(min=7, max=20,message="Password must be between 7 to 20 characters."), EqualTo('confirm_password', message='Passwords must match.')])
     confirm_password = PasswordField('Confirm Password', validators=[InputRequired("Please re-enter your password.")] )
-    DOB = DateField('Date of Birth',render_kw={"placeholder": "dd/mm/yy"}, format='%Y-%m-%d',validators=[DataRequired("Please enter your date of birth.")])
+    DOB = DateField('Date of Birth',render_kw={"placeholder": "dd/mm/yyyy"}, format='%Y-%m-%d',validators=[DataRequired("Please enter your date of birth.")])
     address = StringField('Address', validators=[InputRequired("Please enter your address."), validators.Length(max=50)])
     type = SelectField('User Type', choices=[('patient', 'Patient'), ('physician', 'Physician')] )
     submit = SubmitField('Sign Up')
@@ -44,8 +44,8 @@ class Physician_SignUp(FlaskForm):
 
 
 class Booking(FlaskForm):
-    date=DateField('Date', format='%Y-%m-%d', default=datetime.datetime.now().date(), validators=[InputRequired("Please enter the new appointment date.")])
-    time=TimeField('Time', validators=[DataRequired("Please enter the new appointment time.")])
+    date=DateField('Date', format='%Y-%m-%d',render_kw={"placeholder": "dd/mm/yyyy"}, default=datetime.datetime.now().date(), validators=[InputRequired("Please enter the new appointment date.")])
+    time=TimeField('Time', render_kw={"placeholder": "HH:MM"}, validators=[DataRequired("Please enter the new appointment time.")])
     physician_name = StringField("Physician's Name", validators=[InputRequired("Please enter the name of your physician.")])
 
     def validate_time(form, field):
