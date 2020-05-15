@@ -80,9 +80,9 @@ def signup():
             file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))  
             '''
 
-
+            ##do med id_after
             user = Physician(fname = fname, lname=lname, email=data['email'], address=data['address'], date_of_birth=DOB,
-            type1=data['physician_type'], degree=data['degree'],place_of_education = data['place_of_education'],med_id=data['med_key'] ) 
+            type1=data['physician_type'], degree=data['degree'],place_of_education = data['place_of_education']) 
 
             ##Store MedicalFile
             
