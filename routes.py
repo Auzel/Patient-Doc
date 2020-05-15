@@ -82,7 +82,7 @@ def signup():
 
 
             user = Physician(fname = fname, lname=lname, email=data['email'], address=data['address'], date_of_birth=DOB,
-            type1=data['physician_type'], degree=data['degree'],place_of_education = data['place_of_education'],med_id=data['med_id'] ) 
+            type1=data['physician_type'], degree=data['degree'],place_of_education = data['place_of_education'],med_id=data['med_key'] ) 
 
             ##Store MedicalFile
             
