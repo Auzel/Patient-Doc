@@ -206,7 +206,7 @@
   left: 0;
   bottom: 0;
   width: 100px;
-  background: url("img/stripe-bg.jpg") center bottom no-repeat, url("img/stripe-bg.jpg") repeat;
+  background: url("../img/jpg_png/stripe-bg.jpg") center bottom no-repeat, url("../img/jpg_png/stripe-bg.jpg") repeat;
 }
 .template-iso .left-stripes .circle {
   -moz-border-radius: 50%;

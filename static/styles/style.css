@@ -8,6 +8,11 @@ html,body {
     color: #222;
 }
 
+.narrow{
+    width:80%;
+    margin-left:10%;
+}
+
 .navbar{
     padding: .8rem;
 }
@@ -213,7 +218,7 @@ figure {
   height: 100%;
 }
 #fixed {
-  background-image: url('img/mac.png');
+  background-image: url('../img/jpg_png/mac.png');
   position: fixed;
   display: block;
   top: 0;

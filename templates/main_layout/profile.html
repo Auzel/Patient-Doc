@@ -83,6 +83,7 @@
                                 {% endif %}
                             {% else %} 
                                 <form action="/profile" method="POST"> 
+                                    {{form.csrf_token}}
                                     <p>{{basic.name.label}}: {{user.fname}}  {{user.lname}}</p>
                                     <p>{{basic.type.label}}: {{user.type}}</p>                        
                                     <p>{{basic.email.label}}: {{basic.email(value=user.email)}}</p>

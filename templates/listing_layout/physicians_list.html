@@ -1,0 +1,42 @@
+{% extends "listing_layout/listing_layout.html" %}
+{% block title %}| {{title}} {% endblock %}
+
+{% block heading %}
+{{title}}
+{% endblock %}
+
+{% block sub_heading %}
+{% endblock %}
+
+{% block table_headers %}
+    <th>ID</th>
+    <th>Name</th> 
+    <th>Email</th> 
+    <th>Date of Birth</th> 
+    <th>Address</th>
+    <th>Type </th>
+    <th>Degree </th>
+    <th>Education</th>
+    <th>Med Institution </th>
+{% endblock %}
+
+
+{% block table_body %}
+
+    {% for user in users %}
+        <tr id="change"> 
+            <th scope=row>{{user.id}}</th> 
+            <td><a href="/physicians/{{user.id}}">{{user.fname}} {{user.lname}}</td> 
+            <td>{{user.email}}</td>
+            <td>{{user.date_of_birth.strftime("%d-%B-%Y")}} </td>
+            <td>{{user.address}} </td>
+            <td>{{user.type1}} </td>
+            <td>{{user.degree}} </td>
+            <td>{{user.place_of_education}}</td>
+            <td>{{user.med_institution.name}}</td>
+        </tr> 
+     {% endfor %}
+
+{% endblock %}
+
+

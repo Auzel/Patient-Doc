@@ -61,7 +61,7 @@ class Patient(User):
 
     
     med_record = db.relationship('Med_Record', uselist=False, backref='patient')
-    releases = db.relationship('Release_Form', foreign_keys="Release_Form.patient_id",  lazy=True)    
+    releases = db.relationship('Release_Form', foreign_keys="Release_Form.patient_id", backref='patient', lazy=True)    
     appointments = db.relationship('Appointment', foreign_keys="Appointment.patient_id", backref='patient', lazy=True)
         
     __mapper_args__ = {
@@ -134,9 +134,9 @@ class Med_Record(db.Model):
     __tablename__='med_record'
 
     id = db.Column(db.Integer, primary_key=True)    
-    current_problem = db.Column(db.String(20), nullable=True)
-    current_treatment=db.Column(db.String(20), nullable=True)
-    history=db.Column(db.String(2000), nullable=True)
+    current_problem = db.Column(db.String(50), nullable=True)
+    current_treatment=db.Column(db.String(50), nullable=True)
+    history=db.Column(db.String(5000), nullable=True)
     patient_id=db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 

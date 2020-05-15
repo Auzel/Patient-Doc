@@ -3,28 +3,89 @@
 
 {% block css_external%}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/template-iso.css') }} ">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/bootstrap-4-5-0.css') }}"> 
 {% endblock %}
 
 
 {% block content %}
+ 
+<!--Do modal for edit medical record-->
+    <div class= "bootstrap-4-5-0">
+            <div class="container">	
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="modal fade" id="myModal">
+                            <div class="modal-dialog">
+                                
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h3 class="modal-title"> Update Medical Record </h3>
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>  
+                                    </div>
+
+                                   
+                                    <form action="/patients/{{med_record.patient_id}}/medical_record" method="POST">
+                                        {{med_rec_problem.csrf_token}}
+                                                                        
+                                        <div class="modal-body">
+                                            {% if user_type == 'patient' %}
+                                            <div class="form-group">
+                                                {{med_rec_problem.current_problem.label}}
+                                                {{med_rec_problem.current_problem(class_="form-control")}}
+                                            </div>
+                                            {%else%}
+                                            <div class="form-group">
+                                                {{med_rec_treatment.current_treatment.label}}
+                                                {{med_rec_treatment.current_treatment(class_="form-control")}}
+                                            </div>
+                                            {%endif%}                         
+                                                                            
+                                        </div>
+                                        <div class="modal-footer">
+                                        {% if user_type == 'patient' %}
+                                            <button type="submit" class="btn btn-primary">Update Problem</button>
+                                        {% else %} 
+                                            <button type="submit" class="btn btn-primary">Update Treatment </button>
+                                        {% endif %}
+                                            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </form>						
+                                </div>
+                                
+                            </div>
+                        </div>                        
+                        <a href="#" data-toggle="modal" data-target="#myModal"> Update Medical Record </a>
+                    </div>
+                
+                </div>
+            </div> 
+        </div>
+
+
+    <!-- end modal-->
+
+
+
+    <!-- Viewing med_record section-->
     <div class="template-iso">
         <div id="container">
             <div class="left-stripes">
                 <div class="circle c-upper"></div>
-                <div class="circle c-lower"></div>
+                <div class="circle c-lower"></div>   
             </div>
             
-            {% if med_record%}
+            {% if med_record%}  <!--this should always be true. But an extra security layer-->
                 <div class="right-invoice">
                     <section id="memo">  
                         <div class="logo">
                             <img src="{{ url_for('static', filename='img/jpg_png/patient.jpg') }} " alt="Patient Picture"/>
                         </div>
+                        
                     </section>
 
                     <section id="invoice-title-number">
                     
-                        <div id="title">{{med_record.patient.fname}} {{med_record.patient.lname}}</div>
+                        <div id="title">Name: {{med_record.patient.fname}} {{med_record.patient.lname}}</div>
 
                         <div class="title-bottom">
                             <span id="number">Date of Birth: {{med_record.patient.date_of_birth.strftime("%d-%B-%Y") }}</span>
@@ -63,16 +124,14 @@
                             <span>Medical history: {{med_record.history}}</span>
                         </div>
                     </section>
-                
-                    
-                    <section id="terms">
-                    
-                        <span>Confidentiality information</span>
+
+                    <section id="terms">                    
+                        <div></div>
+                        <div>Confidentiality</div>
                         <div>
                             <p>This medical information cannot be edited, copied or redistributed without express consent from the patient.
-                            Failure to do so can and shall result in legal action being taken against all parties involved.
-                        </div>
-                        
+                            Failure to do so can and shall result in legal action being taken against all parties involved. </p>
+                        </div>                        
                     </section>
 
                 </div>
@@ -83,4 +142,3 @@
 
 {% endblock %}
 
-      

@@ -3,18 +3,18 @@ from authlib.integrations.flask_client import OAuth
 #from flask_oauthlib.client import OAuth as OAuth2
 from flask_cors import CORS
 from flask import Flask
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 ##from flask_jwt import JWT, jwt_required,current_identity
 from flask import Blueprint, request, redirect, render_template, flash, url_for
 from datetime import timedelta 
 from routes import api
 from models import db, Med_Institution, User, Physician, Patient, Med_Record, Release_Form
 
+from forms import Login, SignUp, Physician_SignUp, Booking, Med_Record_SetUp
 
 
 
-
-UPLOAD_FOLDER = './static/img/user_uploads'
+UPLOAD_FOLDER = 'http://s3.amazonaws.com/patientdoc/'
 
 ''' Begin Boilerplate Code '''
 
@@ -104,8 +104,6 @@ def authorize():
     print(userinfo)
     # do something with the token and profile
     return redirect('/')
-
-
 
 
 

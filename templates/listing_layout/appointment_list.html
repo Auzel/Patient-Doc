@@ -18,7 +18,7 @@
 </div>
 {% endblock %}
 
-{% block sub_heading %} 
+{% block sub_heading %}
 
     {% if current_user.type=='patient' %}
         <div class= "bootstrap-4-5-0">
@@ -30,9 +30,11 @@
                                 
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h3> Book an Appointment </h3>
+                                        <h3 class="modal-title"> Book an Appointment </h3>
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>  
                                     </div>
-                                    <form onsubmit="addAppointment(event)">
+                                    <form action="/appointments" method="POST">
+                                        {{booking.csrf_token}}
                                         <div class="modal-body">
                                             
                                             <div class="form-group">
@@ -68,31 +70,35 @@
 {% endblock %}
 
 {% block table_headers %}
-    <th>id</th>
-    <th>Patient</th> 
-    <th>Physician</th> 
-    <th>Date & Time</th>  
-    <th>Change</th>
-    <th>Delete</th>
+    <th>ID</th>
+    <th>Patient's Name</th> 
+    <th>Physician's Name</th> 
+    <th>Date </th>
+    <th>Time</th>  
+    <th>Action</th>
+    <th>Action</th>
+   
 {% endblock %}
 
 
 {% block table_body %}
     {% for appointment in appointments %}
         <tr id="change"> 
-            <th scope=row>{appointment_record.id}</th> 
-            <td>{appointment_record.patient.fname} {appointment_record.patient.lname}</td> 
-            <td>{appointment_record.physician.fname} {appointment_record.physician.lname}</td>
-            {% if update %} 
-                <td>{appointment_record.date.strftime("%d-%B-%Y %H:%M:%S"}</td> 
-                <td><button type="button" type="button" onclick="/appointments?update=True">Change</button></td>
+            <th scope=row>{{appointment.id}}</th> 
+            <td><a href="/patients/{{appointment.patient.id}}"> {{appointment.patient.fname}} {{appointment.patient.lname}} </a></td> 
+            <td><a href="/physicians/{{appointment.physician.id}}">{{appointment.physician.fname}} {{appointment.physician.lname}}</a></td>
+            {% if not update %} 
+                <td>{{appointment.date.strftime("%d-%B-%Y")}}</td> 
+                <td>{{appointment.date.strftime("%H:%M:%S")}}</td> 
+                <td><button type="button" onclick="location.href='/appointments?update=True'">Change</button></td>
             {% else %}
-                <form action="/appointments/{{appointment_record.id}}" method="POST">
-                    <td>{appointment.date()}</td> 
-                    <td><button type="button" type="submit">Submit</button></td>
+                <form action="/appointments/{{appointment.id}}" method="POST">
+                    <td>{{booking.date(class_="form-control", value=appointment.date.strftime("%Y-%m-%d"))}}</td> 
+                    <td>{{booking.time(class_="form-control", value=appointment.date.strftime("%H:%M"))}}</td>
+                    <td><button type="submit"> Book</button></td>                    
                 </form>              
-            {%endif%}            
-            <td><button type="button" type="button" onclick="deleteAppointment(appointment_record.id)">Change</button></td>
+            {%endif%}     
+            <td><button type="button" onclick="deleteAppointment({{appointment.id}})">Delete</button></td>       
         </tr> 
      {% endfor %}
 {% endblock %}
@@ -104,54 +110,12 @@
 {% endblock %}
 
 {% block js_internal %}
-    /* We do the follow to create a new appointment */
-    /* We use async function as oppose to query params since it would require alot of query params*/
-  
-    function addAppointment(event){
-        event.preventDefault();
     
-        //get data from form using elements property
-        let form = event.target
-        let myform = event.target.elements;
-        
-        let data = {
-            date: myform['date'].value,
-            time: myform['time'].value, 
-            physician_email: myform['physician_email'].value
-        }
-        console.log(data)
-        //send data to an api endpoint expecting the data
-        console.log(myform)
-        form.reset();//clears the fields of the form
-        console.log(window.location.hostname)
-        postData("/appointments", data);
-        
-
-    }
-    async function postData(url, data){
-
-        try{
-            let response = await fetch(
-                url, 
-                {
-                    method: 'POST',
-                    body: JSON.stringify(data),//convert data to JSON string
-                    headers: { 'Content-Type':'application/json' }// JSON data
-                },
-            );
-
-            let result = await response.text();//2. Get message from response
-
-        }catch(error){
-            console.log(error);//catch and log any errors
-        }
-    }
-
-    function deleteAppointment(id){
+     function deleteAppointment(id){
 
         yes=confirm("Are you sure you want to delete this appointment?")
         if (yes)
-            location.href = "/appointments/{id}";
+            location.href = `/appointments/${id}`;
     }
             
 {% endblock %}
