@@ -8,12 +8,28 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/bootstrap-4-5-0.css') }}"> 
 {% endblock %}
 
+{% block css_internal %}
+    #bookApt{
+        position: absolute;
+        right: 0px;       
+        padding: 10px;
+    }
+
+    #titleApt{
+        margin-left:35%;
+    }
+
+{% endblock %}
+
 
 {% block heading %}
+<!--
 <div>
     <button type="button" type="button">Connect via Google</button>
 </div>
-<div>
+-->
+
+<div id="titleApt">
     My Appointments
 </div>
 {% endblock %}
@@ -60,7 +76,7 @@
                                 
                             </div>
                         </div>
-                        <a href="#" data-toggle="modal" data-target="#myModal">Book An Appointment </a>
+                        <a href="#" id="bookApt" data-toggle="modal" class="btn btn-primary" data-target="#myModal">Book An Appointment </a>
                     </div>
                 
                 </div>

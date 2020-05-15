@@ -6,6 +6,18 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/bootstrap-4-5-0.css') }}"> 
 {% endblock %}
 
+{% block css_internal %}
+    #updateRecBut{
+        position: absolute;
+        right: 0px;       
+        padding: 10px;
+    }
+
+    body{
+        overflow-y: hidden;
+    }
+
+{%endblock%}
 
 {% block content %}
  
@@ -54,7 +66,7 @@
                                 
                             </div>
                         </div>                        
-                        <a href="#" data-toggle="modal" data-target="#myModal"> Update Medical Record </a>
+                        <a href="#" class="btn btn-primary" id="updateRecBut" data-toggle="modal" data-target="#myModal"> Update Medical Record </a>
                     </div>
                 
                 </div>
@@ -67,8 +79,8 @@
 
 
     <!-- Viewing med_record section-->
-    <div class="template-iso">
-        <div id="container">
+    <div class="template-iso" >
+        <div id="container" >
             <div class="left-stripes">
                 <div class="circle c-upper"></div>
                 <div class="circle c-lower"></div>   

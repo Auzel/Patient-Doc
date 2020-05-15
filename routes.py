@@ -176,6 +176,10 @@ def profile():
             user.date_of_birth=DOB   
         if 'address' in data:
             user.address = data['address']
+
+        if 'email' in data: 
+            user.email = data['email'] 
+
         
         if user.type == 'physician':
             if 'type1' in data:
@@ -183,37 +187,38 @@ def profile():
             if 'degree' in data:
                 user.degree=data['degree']
             if 'education' in data:
-                user.education = data['education'] 
+                user.place_of_education = data['place_of_education']
 
-
-    if (user.type == 'patient' and  basic.validate_on_submit()) or (user.type == 'patient' and extra.validate_on_submit()):          
-        data=request.form
         
-        ##patient section
-        if 'email' in data: 
-            user.email = data['email']
-        if 'password' in data:
-            if len(data['password']) >= 7 and len(data['password'])<=20:
-                user.set_password(data['password'])
-        if 'DOB' in data:
-            DOB = datetime.datetime.strptime(data['DOB'],"%Y-%m-%d")
-            user.date_of_birth=DOB           
-        if 'address' in data:
-            user.address = data['address']
+        '''
+        ## temporarily disable validation as all fields arent included
+        if (user.type == 'patient' and  basic.validate_on_submit()) or (user.type == 'patient' and extra.validate_on_submit()):          
+            data=request.form
+            
+            ##patient section
+            if 'email' in data: 
+                user.email = data['email']
+            if 'password' in data:
+                if len(data['password']) >= 7 and len(data['password'])<=20:
+                    user.set_password(data['password'])
+            if 'DOB' in data:
+                DOB = datetime.datetime.strptime(data['DOB'],"%Y-%m-%d")
+                user.date_of_birth=DOB           
+            if 'address' in data:
+                user.address = data['address']
 
-        ##physician section
-        if user.type == 'physician':
-            if 'type1' in data:
-                user.type1=data['type1']
-            if 'degree' in data:
-                user.degree=data['degree']
-            if 'place_of_education' in data:
-                user.education = data['place_of_education'] 
-            if 'med_key' in data:
-                user.med_key = data['med_key']
-
-         ## note above that name, nor type can be changed                        
-
+            ##physician section
+            if user.type == 'physician':
+                if 'type1' in data:
+                    user.type1=data['type1']
+                if 'degree' in data:
+                    user.degree=data['degree']
+                if 'place_of_education' in data:
+                    user.education = data['place_of_education'] 
+                if 'med_key' in data:
+                    user.med_key = data['med_key']
+        '''
+        ## note above that name, nor type can be changed                        
         try:
             db.session.add(user) # save new user
             db.session.commit()
@@ -223,8 +228,9 @@ def profile():
             flash('Email already exists')
             return redirect(url_for('.signup'))
         flash('Profile Updated.')
-    else:
+    '''else:
         flash("Update couldn't be completed. Please ensure you have inputted valid data.")
+    '''
     return redirect(url_for('.profile'))
     
 ## This method deals with deletion of a user account.

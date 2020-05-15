@@ -66,8 +66,10 @@
             <div class="carousel-caption">
                 <h1 class="display-2">PATIENT-DOC</h1>
                 <h3>Website for doctors and patients</h3>
-                <button type="button" class="btn btn-outline-light btn-lg">SIGN UP</button>
-                <button type="button" class="btn btn-primary btn-lg">LOGIN</button>
+                {%if not user%}
+                    <button type="button" onclick="location.href='/signup'" class="btn btn-outline-light btn-lg">SIGN UP</button>
+                    <button type="button" onclick="location.href='/login'" class="btn btn-primary btn-lg">LOGIN</button>
+                {%endif%}
             </div>
         </div>
             <div class="carousel-item">

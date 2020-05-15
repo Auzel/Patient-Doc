@@ -1,11 +1,17 @@
 {% extends "main_layout/main_layout.html" %}
 {% block title %}| {{title}} {% endblock %}
 
+{% block css_internal %}
+#titleOverall{
+    margin-left: 35%;
+}
+{%endblock%}
+
 
 {% block content %}      
 
     <br>
-    <h2 id=tables-striped>{% block heading %} {% endblock %}</h2> 
+    <h2 id=tables-striped> <div id="titleOverall"> {% block heading %} {% endblock %}  </div></h2> 
 
     <div class="bs-callout bs-callout-danger" id=callout-tables-striped-ie8> 
         <p>{% block sub_heading %} {% endblock %}</p> 

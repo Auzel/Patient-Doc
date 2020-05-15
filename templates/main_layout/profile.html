@@ -53,8 +53,8 @@
                         <!-- END SIDEBAR USER TITLE -->
                         <!-- SIDEBAR BUTTONS -->
                         <div class="profile-userbuttons">
-                            <button type="button" class="btn btn-success btn-sm" onclick="location.href='/profile?update=True'" type="button">Update </button>
-                            <button type="button" class="btn btn-danger btn-sm" onclick="deletes()" type="button">Delete</button>
+                            <button type="button" class="btn btn-success btn-sm" onclick="location.href='/profile?update=True'" >Update </button>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="deletes()" >Delete</button>
                         </div>
                         <!-- END SIDEBAR BUTTONS -->
                         <!-- SIDEBAR MENU -->
@@ -85,7 +85,7 @@
                                     <p>{{basic.name.label}}: {{user.fname}}  {{user.lname}}</p>
                                     <p>{{basic.type.label}}: {{user.type}}</p>                        
                                     <p>{{basic.email.label}}: {{basic.email(value=user.email)}}</p>
-                                    <p>{{basic.password.label}}:  {{basic.password()}}</p>
+                                    <p>{{basic.password.label}}:  {{basic.password(value=user.password)}}</p>
                                     <p>{{basic.DOB.label}}: {{basic.DOB(value=user.date_of_birth)}}</p>
                                     <p>{{basic.address.label}}:  {{basic.address(value=user.address)}}</p>
                                     {% if user.type == 'physician' %}                   
