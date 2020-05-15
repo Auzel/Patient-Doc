@@ -5,13 +5,6 @@
     <link href="{{ url_for('static', filename='styles/style2.css') }}" type="text/css" rel="stylesheet">
 {% endblock %}
 
-{% block css_internal %}
-
-.googleLog{
-   margin-left:10%;
-   margin-bottom:10px;
-}
-{% endblock %}
 
 {% block content %}
     
@@ -26,16 +19,6 @@
         <!--form start-->   
         <form action="signup" method="POST" enctype=multipart/form-data class="form-container" id=form1>
             {{ signup.csrf_token }}
-             <div class="googleLog" >
-                    <div class="row" >
-                        <div class="col-md-3">
-                            <a class="btn btn-outline-dark bg-white text-dark" href="/google_login" role="button" style="text-transform:none" >
-                            <img width="20px" style="margin-bottom:3px; margin-right:5px" alt="Google sign-in" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" />
-                                Login with Google
-                            </a>
-                        </div>
-                    </div>
-                </div>
             <h1>Sign Up</h1>
            
             <div class="form-group">
