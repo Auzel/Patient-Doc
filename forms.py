@@ -33,15 +33,16 @@ class Physician_SignUp(FlaskForm):
     physician_type= SelectField('Physician Type', choices=[('doctor', 'Doctor'), ('dentist', 'Dentist')] )
     degree=StringField('Degree', validators=[InputRequired("Please enter your degree."), validators.Length(max=20)])
     place_of_education=StringField('University', validators=[InputRequired("Please enter the institution where you received your degree."), validators.Length(max=20)])
-    license= FileField('License File' ,validators=[DataRequired("Please upload your license file.")] )
+    #license= FileField('License File' ,validators=[DataRequired("Please upload your license file.")] )
     med_key = IntegerField('Medical Institution Key', validators=[InputRequired("Please enter the med ID assigned to your medical instutitions."), validators.Length(min=1, max=10,message="A valid med ID is required.")] )
 
+    '''
     def validate_license(form, field):
         filename=field.data.filename
         valid = '.' in filename and filename.rsplit('.', 1)[1].lower() in {'jpg','jpeg','png'}
         if not valid:
             raise ValidationError("Incorrect format")
-
+    '''
 
 class Booking(FlaskForm):
     date=DateField('Date', format='%Y-%m-%d',render_kw={"placeholder": "dd/mm/yyyy"}, default=datetime.datetime.now().date(), validators=[InputRequired("Please enter the new appointment date.")])

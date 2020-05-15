@@ -77,8 +77,7 @@
                                 {% if user.type == 'physician' %}                   
                                     <p>{{extra.type.label}}: {{user.physician_type}}</p>
                                     <p>{{extra.degree.label}}: {{user.degree}}</p>
-                                    <p>{{extra.place_of_education.label}}: {{user.place_of_education}}</p>
-                                    <p>{{extra.license.label}}: license</p>
+                                    <p>{{extra.place_of_education.label}}: {{user.place_of_education}}</p>                                    
                                     <p>{{extra.med_key.label}}: {{user.med_key}}</p>
                                 {% endif %}
                             {% else %} 

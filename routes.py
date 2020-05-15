@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 import datetime
 import os
 
-UPLOAD_FOLDER = 'http://s3.amazonaws.com/patientdoc/'
+#UPLOAD_FOLDER = 'http://s3.amazonaws.com/patientdoc/'
 
 
 api = Blueprint('api', __name__)
@@ -71,19 +71,18 @@ def signup():
             user = Patient(fname = fname, lname=lname, email=data['email'], address=data['address'], date_of_birth=DOB)
           
         elif type=='physician':
-            ##deal with dereference key to an integer
-            ##remember to add med_id to variable
-            ## change license
-
+           
+           
+           # not finish saving to AWS
+            '''
             file = request.files['license']        
             filename = secure_filename(file.filename)
-            file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
-
-            license=filename
+            file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))  
+            '''
 
 
             user = Physician(fname = fname, lname=lname, email=data['email'], address=data['address'], date_of_birth=DOB,
-            type1=data['physician_type'], degree=data['degree'],place_of_education = data['place_of_education'],med_id=data['med_id'], license=license ) 
+            type1=data['physician_type'], degree=data['degree'],place_of_education = data['place_of_education'],med_id=data['med_id'] ) 
 
             ##Store MedicalFile
             
@@ -213,7 +212,7 @@ def profile():
             if 'med_key' in data:
                 user.med_key = data['med_key']
 
-         ## note above that name, type nor medical license can be changed                        
+         ## note above that name, nor type can be changed                        
 
         try:
             db.session.add(user) # save new user

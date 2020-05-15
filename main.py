@@ -14,7 +14,7 @@ from forms import Login, SignUp, Physician_SignUp, Booking, Med_Record_SetUp
 
 
 
-UPLOAD_FOLDER = 'http://s3.amazonaws.com/patientdoc/'
+#UPLOAD_FOLDER = 'http://s3.amazonaws.com/patientdoc/'
 
 ''' Begin Boilerplate Code '''
 
@@ -32,7 +32,7 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://b4ab06921840a3:995a5935@us-cdbr-iron-east-01.cleardb.net/heroku_b2abbb44d079db0'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     app.config['SECRET_KEY'] = 'P@T|nt-D0CT0R@App'    
-    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+    #app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     #app.config['JWT_EXPIRATION_DELTA'] = timedelta(days = 1)   
     login_manager.init_app(app)
     login_manager.login_view = 'api.login'   
