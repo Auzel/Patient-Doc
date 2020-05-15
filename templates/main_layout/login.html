@@ -5,11 +5,22 @@
     <link href="{{ url_for('static', filename='styles/style1.css') }}" type="text/css" rel="stylesheet">
 {% endblock %}
 
+{% block css_internal %}
+
+.googleLog{
+    margin-left:6%;
+}
+{% endblock %}
+
 {% block content %}
 
 <div class="container-fluid bg">
     <div class="row">
-        <div class="col-md-4 col-sm-4 col-xs-12"></div>
+        <div class="col-md-4 col-sm-4 col-xs-12" >
+
+            
+
+        </div>
         <div class="col-md-4 col-sm-4 col-xs-12">
             <!--form start-->   
             <form class="form-container"  action="login" method="POST">
@@ -28,7 +39,18 @@
                     {{ login.remember_me.label }}
                 </div>
                     {{ login.submit(class_="btn btn-success btn-block") }}
-                  
+                <hr>
+
+                <div class="googleLog" >
+                    <div class="row" >
+                        <div class="col-md-3">
+                            <a class="btn btn-outline-dark bg-white text-dark" href="/google_login" role="button" style="text-transform:none" >
+                            <img width="20px" style="margin-bottom:3px; margin-right:5px" alt="Google sign-in" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" />
+                                Login with Google
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </form>  
             <!--form end-->
         </div>

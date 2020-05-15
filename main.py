@@ -3,7 +3,7 @@ from authlib.integrations.flask_client import OAuth
 #from flask_oauthlib.client import OAuth as OAuth2
 from flask_cors import CORS
 from flask import Flask
-from flask_login import LoginManager, current_user
+from flask_login import LoginManager, current_user, login_user
 ##from flask_jwt import JWT, jwt_required,current_identity
 from flask import Blueprint, request, redirect, render_template, flash, url_for
 from datetime import timedelta 
@@ -89,22 +89,40 @@ google = oauth.register(
 
 ##External routesin
 @app.route('/google_login')
-def login():
+def google_login():
     
     google = oauth.create_client('google')  # create the google oauth client
-    redirect_uri = url_for('google_authorize', _external=True)
+    redirect_uri = url_for('authorize', _external=True)
     return google.authorize_redirect(redirect_uri)
     
    
-@app.route('/google_authorize')
+@app.route('/authorize')
 def authorize():
+    user=None
     token = google.authorize_access_token()
     resp = google.get('userinfo')
     userinfo= resp.json()
-    print(userinfo)
-    # do something with the token and profile
-    return redirect('/')
+    print(userinfo['email'])
+    user = User.query.filter_by(email=userinfo['email']).first()
+    if user:            
+        login_user(user)
+        flash('Logged in successfully.') 
+        user.num_visits+=1
+        db.session.add(user)
+        db.session.commit()
 
+        if user.num_visits==1:  ## first time
+            return redirect(url_for('api.index')) ## go to home page
+
+        next = request.args.get('next')
+
+        ##if not is_safe_url(next):
+            ##return abort(400)
+        return redirect(next or url_for('.index'))
+
+    else:
+        flash('No user associated with this google account. Please register an account first.') # send message to next page    
+        return redirect(url_for('api.signup')) 
 
 
 @app.errorhandler(404)
