@@ -44,11 +44,22 @@
                                             <div class="form-group">
                                                 {{med_rec_problem.current_problem.label}}
                                                 {{med_rec_problem.current_problem(class_="form-control")}}
+                                                <ul>
+                                                    {% for error in med_rec_problem.current_problem.errors %}
+                                                        <li>{{ error }}</li>
+                                                    {% endfor %}
+                                                </ul>
                                             </div>
                                             {%else%}
                                             <div class="form-group">
                                                 {{med_rec_treatment.current_treatment.label}}
                                                 {{med_rec_treatment.current_treatment(class_="form-control")}}
+                                                <ul>
+                                                    {% for error in med_rec_treatment.current_treatment.errors %}
+                                                        <li>{{ error }}</li>
+                                                    {% endfor %}
+                                                </ul>
+
                                             </div>
                                             {%endif%}                         
                                                                             

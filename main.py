@@ -13,7 +13,6 @@ from models import db, Med_Institution, User, Physician, Patient, Med_Record, Re
 from forms import Login, SignUp, Physician_SignUp, Booking, Med_Record_SetUp
 
 
-
 #UPLOAD_FOLDER = 'http://s3.amazonaws.com/patientdoc/'
 
 ''' Begin Boilerplate Code '''

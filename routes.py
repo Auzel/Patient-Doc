@@ -40,6 +40,7 @@ def index():
 @api.route('/signup', methods=['GET', 'POST'])
 def signup():
     ### Need to make slight change for physician
+
     signup = SignUp()
     physician_signup = Physician_SignUp()
 

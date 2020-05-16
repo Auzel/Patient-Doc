@@ -83,16 +83,76 @@
                                     {{basic.csrf_token}}
                                     {{extra.csrf_token}}
                                     <p>{{basic.name.label}}: {{user.fname}}  {{user.lname}}</p>
-                                    <p>{{basic.type.label}}: {{user.type}}</p>                        
+                                    <ul>
+                                        {% for error in basic.name.errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+
+                                    <p>{{basic.type.label}}: {{user.type}}</p>    
+                                    <ul>
+                                        {% for error in basic.type.errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+
                                     <p>{{basic.email.label}}: {{basic.email(value=user.email)}}</p>
+                                    <ul>
+                                        {% for error in basic.email.errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+
                                     <p>{{basic.password.label}}:  {{basic.password(value=user.password)}}</p>
+                                    <ul>
+                                        {% for error in basic.password.errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+
                                     <p>{{basic.DOB.label}}: {{basic.DOB(value=user.date_of_birth)}}</p>
+                                    <ul>
+                                        {% for error in basic.DOB.errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+
                                     <p>{{basic.address.label}}:  {{basic.address(value=user.address)}}</p>
+                                    <ul>
+                                        {% for error in basic.address.errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+
                                     {% if user.type == 'physician' %}                   
                                         <p>{{extra.type.label}}: {{extra.physician_type(value=user.physician_type)}}</p>
+                                        <ul>
+                                            {% for error in extra.type.errors %}
+                                                <li>{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
+
                                         <p>{{extra.degree.label}}: {{extra.degree(value=user.degree)}}</p>
+                                        <ul>
+                                            {% for error in extra.degree.errors %}
+                                                <li>{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
+
                                         <p>{{extra.place_of_education.label}}: {{extra.place_of_education(value=user.place_of_education)}}</p>
+                                        <ul>
+                                            {% for error in extra.place_of_education.errors %}
+                                                <li>{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
+
                                         <p>{{extra.med_key.label}}: {{extra.med_key(value=user.med_key)}}</p>
+                                        <ul>
+                                            {% for error in extra.med_key.errors %}
+                                                <li>{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
+
                                     {% endif %}
                                     <input type="submit" value="save" class="btn btn-success btn-block">
                                 </form>
