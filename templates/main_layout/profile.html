@@ -73,7 +73,7 @@
                                 <p>{{basic.DOB.label}}: {{user.date_of_birth.strftime("%d-%B-%Y")}}</p>
                                 <p>{{basic.address.label}}:  {{user.address}}</p>
                                 {% if user.type == 'physician' %}                   
-                                    <p>{{extra.type.label}}: {{user.physician_type}}</p>
+                                    <p>{{extra.physician_type.label}}: {{user.physician_type}}</p>
                                     <p>{{extra.degree.label}}: {{user.degree}}</p>
                                     <p>{{extra.place_of_education.label}}: {{user.place_of_education}}</p>                                    
                                     <p>{{extra.med_key.label}}: {{user.med_key}}</p>
