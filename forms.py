@@ -21,12 +21,18 @@ class SignUp(FlaskForm):
     DOB = DateField('Date of Birth',render_kw={"placeholder": "dd/mm/yyyy"}, format='%Y-%m-%d',validators=[InputRequired("Please enter your date of birth.")])
     address = StringField('Address', validators=[InputRequired("Please enter your address."), validators.Length(max=50)])
     type = SelectField('User Type', choices=[('patient', 'Patient'), ('physician', 'Physician')] )
+    user_img= FileField('Profile Photo' ,validators=[DataRequired("Please upload a photo of yourself.")] )
     submit = SubmitField('Sign Up')
     
     def validate_DOB(form, field):
         if field.data > datetime.datetime.now().date() - datetime.timedelta(days=18*365):
             raise ValidationError("User must be older than 18 years older")
-          
+
+    def validate_user_img(form, field):
+        filename=field.data.filename
+        valid = '.' in filename and filename.rsplit('.', 1)[1].lower() in {'jpg','jpeg','png'}
+        if not valid:
+            raise ValidationError("Incorrect format") 
 
     
 class Physician_SignUp(FlaskForm):

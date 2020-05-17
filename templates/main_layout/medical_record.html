@@ -13,9 +13,6 @@
         padding: 10px;
     }
 
-    body{
-        overflow-y: hidden;
-    }
 
 {%endblock%}
 
@@ -100,8 +97,9 @@
             {% if med_record%}  <!--this should always be true. But an extra security layer-->
                 <div class="right-invoice">
                     <section id="memo">  
+                        
                         <div class="logo">
-                            <img src="{{ url_for('static', filename='img/jpg_png/patient.jpg') }} " alt="Patient Picture"/>
+                            <img src="https://bpspatientdoc123.s3-us-west-1.amazonaws.com/{{med_record.patient.img}}" alt="Patient Picture"/>
                         </div>
                         
                     </section>

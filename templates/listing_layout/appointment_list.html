@@ -157,7 +157,7 @@
 
         yes=confirm("Are you sure you want to delete this appointment?")
         if (yes)
-            location.href = `/appointments/${id}`;
+            location.href = `/appointments/${id}?delete=True`;
     }
             
 {% endblock %}

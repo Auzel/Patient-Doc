@@ -15,6 +15,9 @@ mysqlclient==1.4.6
 Flask-Login == 0.5.0
 #Flask-OAuth == 0.12
 #Flask-OAuthlib == 0.9.5
+boto3==1.13.11
+awscli == 1.18.61
+
 
 
 Authlib==0.14.1
@@ -39,4 +42,4 @@ requests==2.23.0
 six==1.14.0
 urllib3==1.25.8
 Werkzeug==1.0.1
-boto3==1.13.11
+

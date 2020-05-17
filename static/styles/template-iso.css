@@ -40,8 +40,8 @@
   font-weight: 400;
   src: local('Sanchez'), local('Sanchez-Regular'), url(https://fonts.gstatic.com/s/sanchez/v7/Ycm2sZJORluHnXbIfmdR-A.ttf) format('truetype');
 }
-.template-iso html,
-.template-iso body,
+.template-iso,
+.template-iso,
 .template-iso div,
 .template-iso span,
 .template-iso applet,
@@ -128,7 +128,7 @@
   font-size: 100%;
   vertical-align: baseline;
 }
-.template-iso html {
+.template-iso {
   line-height: 1;
 }
 .template-iso ol,
@@ -175,8 +175,8 @@
 .template-iso summary {
   display: block;
 }
-.template-iso html,
-.template-iso body {
+.template-iso,
+.template-iso {
   /* MOVE ALONG, NOTHING TO CHANGE HERE! */
 }
 .template-iso .clearfix {
@@ -197,7 +197,7 @@
 .template-iso #container {
   font: normal 13px/1.4em 'Open Sans', Sans-serif;
   margin: 0 auto;
-  min-height: 1158px;
+  /*min-height: 1158px; */
   position: relative;
 }
 .template-iso .left-stripes {
@@ -226,7 +226,7 @@
 }
 .template-iso .right-invoice {
   padding: 40px 30px 40px 130px;
-  min-height: 1078px;
+  /*min-height: 1078px; */
 }
 .template-iso #memo .company-info {
   float: left;
@@ -431,7 +431,7 @@
   text-transform: uppercase;
 }
 .template-iso #terms > div {
-  min-height: 50px;
+  min-height: 50px; 
   min-width: 50px;
 }
 .template-iso .payment-info {

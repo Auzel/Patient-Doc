@@ -6,8 +6,11 @@ from models import db, Med_Institution, User, Physician, Patient, Appointment, M
 from forms import Login, SignUp, Physician_SignUp, Booking, Med_Record_SetUp, Med_Record_Treatment, Med_Record_Problem
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from botocore.exceptions import ClientError
 import datetime
 import os
+import logging
+import boto3
 
 #UPLOAD_FOLDER = 'http://s3.amazonaws.com/patientdoc/'
 
@@ -67,27 +70,33 @@ def signup():
         
         DOB = datetime.datetime.strptime(data['DOB'],"%Y-%m-%d")
 
+
+        
+        ##get user image and determine filename
+        user_img_file = request.files['user_img']   
+
+        #create new file name to be unique on AWS 
+        user_img=data['email']+"_img"+"."+user_img_file.filename.rsplit('.', 1)[1].lower()           
         
         if type=='patient':
-            user = Patient(fname = fname, lname=lname, email=data['email'], address=data['address'], date_of_birth=DOB)
+            user = Patient(fname = fname, lname=lname, email=data['email'], address=data['address'], date_of_birth=DOB, img=user_img)
           
-        elif type=='physician':
-           
-           
-           # not finish saving to AWS
-            '''
-            file = request.files['license']        
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))  
-            '''
-
+        elif type=='physician':    
             ##do med id_after
-            user = Physician(fname = fname, lname=lname, email=data['email'], address=data['address'], date_of_birth=DOB,
+            user = Physician(fname = fname, lname=lname, email=data['email'], address=data['address'], date_of_birth=DOB,img=user_img,
             type1=data['physician_type'], degree=data['degree'],place_of_education = data['place_of_education']) 
+            
+            '''
+            ##we require the id of user to create the filename so we shall add license file url after instantiation of a user object
+            ##get license file and determine filename
+            license_file = request.files['license']   
 
-            ##Store MedicalFile
-            
-            
+            #create new file name to be unique on AWS and save it to user object
+            license="license_"+str(user.id)+"."+license_file.filename.rsplit('.', 1)[1].lower()   
+            user.license=license
+            '''
+
+        ##store pw of user
         user.set_password(data['password']) # set password                    
 
         try:
@@ -98,6 +107,35 @@ def signup():
             db.session.rollback()
             flash('Email already exists')
             return redirect(url_for('.signup'))
+
+        ##We don't store to AWS til we know we have succesffuly added user to db 
+     
+        ##connect to AWS
+        client = boto3.client(
+            's3',               
+            aws_access_key_id='AKIA4OARZYC5SAGN6CVR',
+            aws_secret_access_key='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'
+        )
+
+        response = client.put_object(
+            ACL='public-read',
+            Body=user_img_file,
+            Bucket='bpspatientdoc123',
+            Key=user_img
+        )
+        
+        '''
+        if type=='physician':         
+
+            response = client.put_object(
+                ACL='public-read',
+                Body=license_file,
+                Bucket='bpspatientdoc123',
+                Key=license
+            )
+        '''
+
+
         flash('Account Created!')
         return redirect(url_for('.login'))      
 
@@ -143,6 +181,8 @@ def logout():
     flash("You have been successfully logged out.")
     return redirect(url_for('.index'))
 
+
+
 ##Profiles are created when registered. This method deals with reading and updating profiles
 @api.route('/profile',methods=['GET','POST'])
 @login_required
@@ -155,6 +195,7 @@ def profile():
     else: ##current_user.type == 'physician':
         user=Physician.query.get(current_user.id)
     
+   
 
     update=request.args.get('update')
     if request.method == 'GET' :
@@ -478,6 +519,7 @@ def appointment(id):
                 flash('Cannot delete an Appointment. You are not authorized to perform this action.')
                 return redirect(url_for('.unauthorized'))
             else:
+                
                 flash('Nothing to be done.')
                
     else:

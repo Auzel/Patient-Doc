@@ -18,6 +18,7 @@ class User(UserMixin, db.Model):
     address=db.Column(db.String(50), nullable=False)
     type = db.Column(db.String(50), nullable=False)    
     num_visits = db.Column(db.Integer, default=0)
+    img = db.Column(db.String(60), nullable=False)
     
     
     
@@ -78,6 +79,7 @@ class Physician(User):
     type1= db.Column(db.String(20), nullable=False)
     degree=db.Column(db.String(20), nullable=False)
     place_of_education=db.Column(db.String(20), nullable=False)
+    #license = db.Column(db.String(20), nullable=False)
     med_id=db.Column(db.Integer, db.ForeignKey('med_institution.id'))
     releases=db.relationship('Release_Form', foreign_keys="Release_Form.physician_id", backref='physician', lazy=True)    
     appointments = db.relationship('Appointment', foreign_keys="Appointment.physician_id", backref='physician', lazy=True)##, back_populates="physicians")
