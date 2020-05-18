@@ -82,10 +82,6 @@ google = oauth.register(
     client_kwargs={'scope': 'openid email profile '},
 )
 
-flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-            'client_secret.json',
-            scopes=['https://www.googleapis.com/auth/calendar'],
-            redirect_uri = 'https://8080-b9f814c3-af22-48ef-b3fc-9f80f61e70ce.ws-us02.gitpod.io/oauth2callback')
 
 
 ## consider when doctor or patient deleted, is it deleted from other tables
@@ -131,17 +127,6 @@ def authorize():
         flash('No user associated with this google account. Please register an account first.') # send message to next page    
         return redirect(url_for('api.signup')) 
 
-@app.route('/auth_calendar')
-def auth_calendar(): 
-    auth_uri = flow.authorization_url()
-    return redirect(auth_uri)
-   
-
-@app.route('/oauth2callback')
-def oauth2callback():
-    service = build('calendar', 'v3', credentials=flow.credentials)
-    return "hi"
-    return redirect(url_for('api.index'))
 
 
 @app.errorhandler(404)
