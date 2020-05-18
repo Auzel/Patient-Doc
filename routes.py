@@ -7,10 +7,13 @@ from forms import Login, SignUp, Physician_SignUp, Booking, Med_Record_SetUp, Me
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from botocore.exceptions import ClientError
+
 import datetime
 import os
 import logging
 import boto3
+
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "client_secret.json"
 
 #UPLOAD_FOLDER = 'http://s3.amazonaws.com/patientdoc/'
 
@@ -27,7 +30,8 @@ def before_request_func():
         return redirect(url_for('.index'))
   
 @api.route('/')
-def index():
+def index():    
+
     user=None
     fields_med_rec=None
     if current_user.is_authenticated:

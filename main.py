@@ -10,6 +10,8 @@ from datetime import timedelta
 from routes import api
 from models import db, Med_Institution, User, Physician, Patient, Med_Record, Release_Form
 
+
+
 from forms import Login, SignUp, Physician_SignUp, Booking, Med_Record_SetUp
 
 
@@ -75,7 +77,7 @@ google = oauth.register(
     authorize_params=None,
     api_base_url='https://www.googleapis.com/oauth2/v1/',
     userinfo_endpoint='https://openidconnect.googleapis.com/v1/userinfo',  # This is only needed if using openId to fetch user info
-    client_kwargs={'scope': 'openid email profile'},
+    client_kwargs={'scope': 'openid email profile https://www.googleapis.com/auth/calendar'},
 )
 
 
@@ -96,12 +98,12 @@ def google_login():
     
    
 @app.route('/authorize')
-def authorize():
+def authorize():    
     user=None
     token = google.authorize_access_token()
     resp = google.get('userinfo')
     userinfo= resp.json()
-    print(userinfo['email'])
+   
     user = User.query.filter_by(email=userinfo['email']).first()
     if user:            
         login_user(user)
@@ -117,7 +119,7 @@ def authorize():
 
         ##if not is_safe_url(next):
             ##return abort(400)
-        return redirect(next or url_for('.index'))
+        return redirect(next or url_for('api.index'))
 
     else:
         flash('No user associated with this google account. Please register an account first.') # send message to next page    
