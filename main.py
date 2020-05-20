@@ -16,6 +16,8 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
 
+import sys
+
 
 UPLOAD_FOLDER = './static/img/user_uploads'
 
@@ -37,7 +39,7 @@ def create_app():
     #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://lmydpdllbtsznz:8d81daf81972e14e2cea72ba07dd5b6f76fd86289a744ae71880c4d9bdf13cf8@ec2-52-202-22-140.compute-1.amazonaws.com:5432/d5teel3845bir8'
     #app.config['SQLALCHEMY_POOL_RECYCLE'] = 299
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-    app.config['SECRET_KEY'] = 'P@T|nt-D0CT0R@App'    
+    app.config['SECRET_KEY'] = 'PaT|nt-D0CT0R@App'    
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     #app.config['JWT_EXPIRATION_DELTA'] = timedelta(days = 1)   
     login_manager.init_app(app)

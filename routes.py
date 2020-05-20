@@ -16,6 +16,7 @@ import datetime
 import os
 import logging
 import boto3
+import sys
 
 ## consider when doctor or patient deleted, is dependent tables deleted as well
 ## note we use flask session to store google credentials but ideally should be stored in the database
@@ -27,17 +28,23 @@ import boto3
 api = Blueprint('api', __name__)
 
 
-'''
+
 @api.before_request
 def before_request_func():
    
     if (not ( (request.method=='POST' and request.endpoint=="api.medical_record") or  ( request.endpoint == 'api.index') ) ) and (current_user.is_authenticated and current_user.type=='patient' and not current_user.med_record):
         return redirect(url_for('.index'))
 
-'''
- 
+
+
 @api.route('/')
-def index():     
+def index():   
+    print("is authenticated ",current_user.is_authenticated)
+    sys.stdout.flush() 
+    if current_user.is_authenticated:
+        if current_user.med_record:
+            print("have record")
+            ys.stdout.flush() 
     user=None
     fields_med_rec=None
     if current_user.is_authenticated:
