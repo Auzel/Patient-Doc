@@ -43,12 +43,14 @@
                         <!-- END SIDEBAR USERPIC -->
                         <!-- SIDEBAR USER TITLE -->
                         <div class="profile-usertitle">
-                            <div class="profile-usertitle-name larger" class=>
-                                {{user.fname}}  {{user.lname}}
-                            </div>
-                            <div class="profile-usertitle-job larger">
-                                {{user.type}}
-                            </div>
+                            {%if user%}
+                                <div class="profile-usertitle-name larger">
+                                    {{user.fname}}  {{user.lname}}
+                                </div>
+                                <div class="profile-usertitle-job larger">
+                                    {{user.type}}
+                                </div>
+                            {%endif%}
                         </div>
                         <!-- END SIDEBAR USER TITLE -->
                         <!-- SIDEBAR BUTTONS -->

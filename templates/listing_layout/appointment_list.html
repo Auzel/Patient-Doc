@@ -146,35 +146,37 @@
 
 
 {% block table_body %}
-    {% for appointment in appointments %}
-        <tr id="change"> 
-            <th scope=row>{{appointment.id}}</th> 
-            <td><a href="/patients/{{appointment.patient.id}}"> {{appointment.patient.fname}} {{appointment.patient.lname}} </a></td> 
-            <td><a href="/physicians/{{appointment.physician.id}}">{{appointment.physician.fname}} {{appointment.physician.lname}}</a></td>
-            {% if update_id != appointment.id|string %} 
-                <td>{{appointment.date.strftime("%d-%B-%Y")}}</td> 
-                <td>{{appointment.date.strftime("%H:%M:%S")}}</td> 
-                <td><button type="button" onclick="location.href='/appointments?update_id={{appointment.id}}'">Change</button></td>
-            {% else %}
-                <form action="/appointments/{{appointment.id}}" method="POST">
-                    <td>{{booking.date(class_="form-control", value=appointment.date.strftime("%Y-%m-%d"))}}</td> 
-                    <ul>
-                        {% for error in booking.date.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                    <td>{{booking.time(class_="form-control", value=appointment.date.strftime("%H:%M"))}}</td>
-                    <ul>
-                        {% for error in booking.time.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                    <td><button type="submit"> Book</button></td>                    
-                </form>              
-            {%endif%}     
-            <td><button type="button" onclick="deleteAppointment({{appointment.id}})">Delete</button></td>       
-        </tr> 
-     {% endfor %}
+    {%if appointments%}
+        {% for appointment in appointments %}
+            <tr id="change"> 
+                <th scope=row>{{appointment.id}}</th> 
+                <td><a href="/patients/{{appointment.patient.id}}"> {{appointment.patient.fname}} {{appointment.patient.lname}} </a></td> 
+                <td><a href="/physicians/{{appointment.physician.id}}">{{appointment.physician.fname}} {{appointment.physician.lname}}</a></td>
+                {% if update_id != appointment.id|string %} 
+                    <td>{{appointment.date.strftime("%d-%B-%Y")}}</td> 
+                    <td>{{appointment.date.strftime("%H:%M:%S")}}</td> 
+                    <td><button type="button" onclick="location.href='/appointments?update_id={{appointment.id}}'">Change</button></td>
+                {% else %}
+                    <form action="/appointments/{{appointment.id}}" method="POST">
+                        <td>{{booking.date(class_="form-control", value=appointment.date.strftime("%Y-%m-%d"))}}</td> 
+                        <ul>
+                            {% for error in booking.date.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        <td>{{booking.time(class_="form-control", value=appointment.date.strftime("%H:%M"))}}</td>
+                        <ul>
+                            {% for error in booking.time.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        <td><button type="submit"> Book</button></td>                    
+                    </form>              
+                {%endif%}     
+                <td><button type="button" onclick="deleteAppointment({{appointment.id}})">Delete</button></td>       
+            </tr> 
+        {% endfor %}
+    {%endif%}
 {% endblock %}
 
 {% block js_external %}	

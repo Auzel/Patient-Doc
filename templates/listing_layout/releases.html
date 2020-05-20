@@ -19,18 +19,19 @@ My Releases
 
 
 {% block table_body %}
-
-    {% for release in release_forms %}
-    <tr id="change"> 
-        <th scope=row>{{release.id}}</th> 
-        <td>{{release.date.strftime("%d-%B-%Y %H:%M:%S")}}</td>
-        <td><a href="/patients/{{release.patient.id}}"> {{release.patient.fname}} {{release.patient.lname}} </a></td> 
-        <td><a href="/physicians/{{release.physician.id}}">{{release.physician.fname}} {{release.physician.lname}}</a></td>
-        {%if current_user.type=='patient' %}
-            <td><button type="button" onclick="removeReleases({{release.id}})">Remove</button></td>   
-        {% endif %}       
-    </tr>   
-    {% endfor %}  
+    {%if release_forms%}
+        {% for release in release_forms %}
+        <tr id="change"> 
+            <th scope=row>{{release.id}}</th> 
+            <td>{{release.date.strftime("%d-%B-%Y %H:%M:%S")}}</td>
+            <td><a href="/patients/{{release.patient.id}}"> {{release.patient.fname}} {{release.patient.lname}} </a></td> 
+            <td><a href="/physicians/{{release.physician.id}}">{{release.physician.fname}} {{release.physician.lname}}</a></td>
+            {%if current_user.type=='patient' %}
+                <td><button type="button" onclick="removeReleases({{release.id}})">Remove</button></td>   
+            {% endif %}       
+        </tr>   
+        {% endfor %}  
+    {%endif%}
 {% endblock %}
 
 
