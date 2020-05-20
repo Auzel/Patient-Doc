@@ -184,11 +184,11 @@ def login():
             if user.num_visits==1:  ## first time
                 return redirect(url_for('.index')) ## go to home page
 
-            next = request.args.get('next')
+            #next = request.args.get('next')
 
             ##if not is_safe_url(next):
                 ##return abort(400)
-            return redirect(next or url_for('.index'))
+            return redirect(url_for('.index'))  #put next or .index
 
         else:
             flash('Invalid email or password') # send message to next page    
