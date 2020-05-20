@@ -122,8 +122,8 @@ def signup():
         ##connect to AWS
         client = boto3.client(
             's3',               
-            aws_access_key_id='AKIA4OARZYC5SAGN6CVR',
-            aws_secret_access_key='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'
+            aws_access_key_id='AKIAIIDOVKWVEPFLKUFA',
+            aws_secret_access_key='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'
         )
 
         response = client.put_object(

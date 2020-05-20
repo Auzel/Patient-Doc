@@ -1,73 +1,34 @@
-[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/uwidcit/info2602ps.git) 
+[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io?#https://github.com/Auzel/Patient-Doc.git) 
 
-# Before you start
-Create a heroku account by following this [link](https://signup.heroku.com/login)
-You will also need a github account.
+# Introduction
+Patient-Doc is a web application that facilitates easy transactions between a patient and a physician. 
+It allows for easy booking and rescheduling of appointments between a patient and physician. 
+A patient can grant access to a physician via "release forms", in which only then a physician may view his/her medical records. 
+However, if a patient schedules an appointment with a physician, the patient automatically grants access of his medical records to that physician.
 
-# Creating & Linking your own github repository
-Git is used to perform source control. It helps teams manage code bases and merge togher their contributions.
-Github is a free Git server for developers to host their git repositories.
+#Requirements
+Users need to be 18 years or older to register as a user on this website
 
-When the project is launched on gitpod, it will already be linked to a starter github repository. To link it to a new repository you need to first run the following command.
+#Restrictions
+Users may sign up as either a patient or physician. 
+If a user registers as a patient, he/she must input their medical records upon first use.
 
-```
-rm - rf .git
-```
-Now you can initialize a new git workspace by executing the following.
+#Features
+➢ The system stores all data securely on redundant servers across the globe.
+➢ A user may log on to their account via their Google account.
+➢ A user can create and modify their profile page.
+➢ A user can check for all physicians available site-wide to choose which physician they should book an appointment with.
+➢ A patient can retrieve, book, reschedule or delete an appointment; whereas a physician only retrieves and reschedules.
+➢ A patient/physician can sync their appointments with google calendar. All subsequent booking,updating and deletion of appointments would be reflected in their Google Calendar. Email and mobile alerts are sent by default. It can be removed.
+➢ Retrieval of records for a particular physician/user or for particular dates can be queried using a query parameter in the url.
+➢ Patients can only view their data and physicians can only view their patient’s data if access is granted.
+➢ Patients can give access to their medical records to another physician without having to re-write it each time. This access can be revoked by patients by deleting it in the release forms nav.
+➢ A physician can modify the medical record of a patient by adding a current treatment prescribed for their patient
+➢ A patient can modify their medical record by updating their current problem.
 
 
-```
-git init
-```
+#Become a Member
+Sign up Now at https://patient-doc.herokuapp.com/
 
-Next, create your respository on github by following this [link](https://github.com/new). Give it a name and click on the green "Create Repository" button below.
-The next page would give you instructions on how to link the repository to an existing workspace.
 
-Copy the command which looks like.
-
-```
-git remote add origin https://github.com/<username>/<reponame>.git
-```
-Paste and run the command in gitpod.
-
-Your workspace should now be linked to your repository
-
-# Heroku Setup
-To login to heroku open a new terminal in gitpod and enter run the following command:
-
-```
-heroku login --interactive
-```
-You will then be prompted to enter you heroku credentials. Then to create a new heroku application run the following command:
-
-```
-heroku create
-```
-The app should be created with a random name and can be seen on your [heroku dashboard](https://dashboard.heroku.com/apps/)
-
-# Pushing changes to Git
-Now the workspace is linked with a git repository it will track all the changes you make to its files.
-Run the following command to select which files will be **staged** (tracked for changes)
-
-```
-git stage *
-```
-
-This will stage all files in the workspace.
-Then You prepare the changes to be sent to the repository by making a **commit**. You must supply a custom commit message when making commits.
-Run the following command
-
-```
-git commit -m "first commit"
-```
-
-Finally you can send your changes to the repository by performing a **push**.
-
-```
-git push -u origin master
-```
-
-Heroku is setup to auto deploy the application for every push to the master branch the github repo. You can view the application by opening it from your [heroku dashboard](https://dashboard.heroku.com/apps/). Click on the newly created app then click on the "Open App" button.
-
-You application should now be deployed on heroku!
 
