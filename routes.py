@@ -44,7 +44,7 @@ def index():
     if current_user.is_authenticated:
         if current_user.med_record:
             print("have record")
-            ys.stdout.flush() 
+            sys.stdout.flush() 
     user=None
     fields_med_rec=None
     if current_user.is_authenticated:
