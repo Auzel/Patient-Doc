@@ -20,8 +20,10 @@ boto3==1.13.13
 google-api-python-client == 1.8.3
 google-auth-httplib2 == 0.0.3
 google-auth-oauthlib == 0.4.1
-google-auth == 1.14.3
+google-auth == 1.15.0
+setuptools == 46.4.0
 psycopg2 == 2.8.5
+
 
 
 Authlib==0.14.1
