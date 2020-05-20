@@ -36,7 +36,7 @@ def before_request_func():
   
 @api.route('/')
 def index():     
-       
+   
     user=None
     fields_med_rec=None
     if current_user.is_authenticated:
@@ -122,9 +122,11 @@ def signup():
         ##connect to AWS
         client = boto3.client(
             's3',               
-            aws_access_key_id='AKIAIIDOVKWVEPFLKUFA',
-            aws_secret_access_key='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'
+            aws_access_key_id=f"{os.environ['AWS_ACCESS_KEY_ID']}",
+            aws_secret_access_key=f"{os.environ['AWS_SECRET_ACCESS_KEY']}"
         )
+
+        
 
         response = client.put_object(
             ACL='public-read',
