@@ -25,7 +25,7 @@ import boto3
 
 
 api = Blueprint('api', __name__)
-from main import credentials_to_dict
+
 
 
 @api.before_request
@@ -747,4 +747,13 @@ def get_about():
 def unauthorized():
     return render_template('/error_handling/unauthorized.html'),401
 
+
+##helper function. Redefine because heroku gives trouble when imported from main; although gitpod runs fine
+def credentials_to_dict(credentials):
+  return {'token': credentials.token,
+          'refresh_token': credentials.refresh_token,
+          'token_uri': credentials.token_uri,
+          'client_id': credentials.client_id,
+          'client_secret': credentials.client_secret,
+          'scopes': credentials.scopes}
 
