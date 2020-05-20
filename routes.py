@@ -39,7 +39,8 @@ def before_request_func():
 
 @api.route('/')
 def index():   
-      
+    
+    session.clear()
     user=None
     fields_med_rec=None
     if current_user.is_authenticated:
