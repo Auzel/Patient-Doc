@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-db = SQLAlchemy()
+db = SQLAlchemy(engine_options={"pool_pre_ping":True})
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
