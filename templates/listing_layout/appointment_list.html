@@ -14,7 +14,10 @@
         right: 0px;       
         padding: 10px;
     }
-
+ 
+    .googleLog{
+        position: absolute;
+    }
     #titleApt{
         margin-left:35%;
     }
@@ -23,6 +26,7 @@
 
 
 {% block heading %}
+
 <!--
 <div>
     <button type="button" type="button">Connect via Google</button>
@@ -35,8 +39,36 @@
 {% endblock %}
 
 {% block sub_heading %}
-
+  
     {% if current_user.type=='patient' %}
+        {% if not connect %}
+            <div class="googleLog" >
+                <div class="row" >
+                    <div class="col-md-3">
+                        <a class="btn btn-outline-dark " href="/google_auth" role="button" style="text-transform:none" >          
+                            <img width="30px" style="margin-bottom:3px; margin-right:5px" alt="Google Calendar" src="//www.gstatic.com/calendar/images/dynamiclogo/2x/cal_19_v1.png" />
+                            Sync with Google Calendar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+
+            <div class="googleLog" >
+                <div class="row" >
+                    <div class="col-md-3">                       
+                        <a class="btn btn-outline-dark " href="https://www.google.com/calendar" role="button" target="_blank" style="text-transform:none" >                                  
+                            <img width="30px" style="margin-bottom:3px; margin-right:5px" alt="Google Calendar" src="//www.gstatic.com/calendar/images/dynamiclogo/2x/cal_19_v1.png" />
+                            Connected
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        {%endif%}
+
+
+
         <div class= "bootstrap-4-5-0">
             <div class="container">	
                 <div class="row">
@@ -119,10 +151,10 @@
             <th scope=row>{{appointment.id}}</th> 
             <td><a href="/patients/{{appointment.patient.id}}"> {{appointment.patient.fname}} {{appointment.patient.lname}} </a></td> 
             <td><a href="/physicians/{{appointment.physician.id}}">{{appointment.physician.fname}} {{appointment.physician.lname}}</a></td>
-            {% if not update %} 
+            {% if update_id != appointment.id|string %} 
                 <td>{{appointment.date.strftime("%d-%B-%Y")}}</td> 
                 <td>{{appointment.date.strftime("%H:%M:%S")}}</td> 
-                <td><button type="button" onclick="location.href='/appointments?update=True'">Change</button></td>
+                <td><button type="button" onclick="location.href='/appointments?update_id={{appointment.id}}'">Change</button></td>
             {% else %}
                 <form action="/appointments/{{appointment.id}}" method="POST">
                     <td>{{booking.date(class_="form-control", value=appointment.date.strftime("%Y-%m-%d"))}}</td> 

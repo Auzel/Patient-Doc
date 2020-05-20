@@ -98,8 +98,8 @@
                 <div class="right-invoice">
                     <section id="memo">  
                         
-                        <div class="logo">
-                            <img src="https://bpspatientdoc123.s3-us-west-1.amazonaws.com/{{med_record.patient.img}}" alt="Patient Picture"/>
+                        <div class="logo">                           
+                            <img src="{{ url_for('static', filename=img_path)}}" alt="Patient Picture"/>
                         </div>
                         
                     </section>

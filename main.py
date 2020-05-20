@@ -5,19 +5,19 @@ from flask_cors import CORS
 from flask import Flask
 from flask_login import LoginManager, current_user, login_user
 ##from flask_jwt import JWT, jwt_required,current_identity
-from flask import Blueprint, request, redirect, render_template, flash, url_for
-from datetime import timedelta 
+from flask import Blueprint, request, redirect, render_template, flash, url_for, session
+from datetime import timedelta
 from routes import api
 from models import db, Med_Institution, User, Physician, Patient, Med_Record, Release_Form
-
-import google.oauth2.credentials
-import google_auth_oauthlib.flow
-from googleapiclient.discovery import build
-
 from forms import Login, SignUp, Physician_SignUp, Booking, Med_Record_SetUp
 
 
-#UPLOAD_FOLDER = 'http://s3.amazonaws.com/patientdoc/'
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import Flow
+from googleapiclient.discovery import build
+
+
+UPLOAD_FOLDER = './static/img/user_uploads'
 
 ''' Begin Boilerplate Code '''
 
@@ -35,7 +35,7 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://b4ab06921840a3:995a5935@us-cdbr-iron-east-01.cleardb.net/heroku_b2abbb44d079db0'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     app.config['SECRET_KEY'] = 'P@T|nt-D0CT0R@App'    
-    #app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     #app.config['JWT_EXPIRATION_DELTA'] = timedelta(days = 1)   
     login_manager.init_app(app)
     login_manager.login_view = 'api.login'   
@@ -50,23 +50,9 @@ app.app_context().push()
 app.register_blueprint(api)
 ''' End Boilerplate Code '''
 
-#oauth = OAuth(app) ##for google
 
-#oauth2 = OAuth2(app) ##for fb
-
-
-'''
-facebook = oauth2.remote_app('facebook',
-    base_url='https://graph.facebook.com/',
-    request_token_url=None,
-    access_token_url='/oauth/access_token',
-    authorize_url='https://www.facebook.com/dialog/oauth',
-    consumer_key='2390386897927898',
-    consumer_secret='0fbaebf03dbff511a9f4d54b57685bfc',
-    request_token_params={'scope': ('email, ')}
-)
-'''
-
+##External routes
+##Start Google Login
 oauth = OAuth(app)
 
 google = oauth.register(
@@ -83,14 +69,6 @@ google = oauth.register(
 )
 
 
-
-## consider when doctor or patient deleted, is it deleted from other tables
-
-##remember to configure flash cards
-
-
-
-##External routesin
 @app.route('/google_login')
 def google_login():
     
@@ -126,6 +104,66 @@ def authorize():
     else:
         flash('No user associated with this google account. Please register an account first.') # send message to next page    
         return redirect(url_for('api.signup')) 
+
+##end google login
+
+##start google authentication
+CLIENT_SECRETS_FILE = "client_secret.json"
+SCOPES = ['https://www.googleapis.com/auth/calendar.events']
+API_SERVICE_NAME = 'calendar'
+API_VERSION = 'v3'
+
+@app.route('/google_auth')
+def google_auth():
+
+    flow = Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES)
+    flow.redirect_uri = url_for('oauth2callback', _external=True)
+
+    authorization_url, state = flow.authorization_url(access_type='offline')
+
+    session['state'] = state
+
+    return redirect(authorization_url)
+
+
+@app.route('/oauth2callback')
+def oauth2callback():
+  # Specify the state when creating the flow in the callback so that it can
+  # verified in the authorization server response.
+    state = session['state']
+
+    flow = Flow.from_client_secrets_file( CLIENT_SECRETS_FILE, scopes=SCOPES, state=state)
+    flow.redirect_uri = url_for('oauth2callback', _external=True)
+
+    # Use the authorization server's response to fetch the OAuth 2.0 tokens.
+    authorization_response = request.url
+    flow.fetch_token(authorization_response=authorization_response)
+
+    # Store credentials in the session.
+    # ACTION ITEM: In a production app, you likely want to save these
+    #              credentials in a persistent database instead.
+    credentials = flow.credentials
+    session['credentials'] = credentials_to_dict(credentials)
+
+    flash("All subsequent appointments shall be reflected on your google calendar.")
+    return redirect(url_for('api.appointments'))
+
+
+
+
+def credentials_to_dict(credentials):
+  return {'token': credentials.token,
+          'refresh_token': credentials.refresh_token,
+          'token_uri': credentials.token_uri,
+          'client_id': credentials.client_id,
+          'client_secret': credentials.client_secret,
+          'scopes': credentials.scopes}
+
+##end google authentication
+
+
+
+
 
 
 

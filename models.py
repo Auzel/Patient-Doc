@@ -163,3 +163,4 @@ class Release_Form(db.Model):
             'id':self.id,
             'date': self.date.strftime("%d-%B-%Y %H:%M:%S")         
         }
+

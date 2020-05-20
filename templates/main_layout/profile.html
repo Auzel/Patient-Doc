@@ -38,7 +38,7 @@
                     <div class="profile-sidebar">
                         <!-- SIDEBAR USERPIC -->
                         <div class="profile-userpic">
-                            <img src="https://bpspatientdoc123.s3-us-west-1.amazonaws.com/{{user.img}}" class="img-responsive" alt="">
+                            <img src="{{ url_for('static', filename=img_path)}}" class="img-responsive" alt="">
                         </div>
                         <!-- END SIDEBAR USERPIC -->
                         <!-- SIDEBAR USER TITLE -->

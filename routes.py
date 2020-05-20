@@ -8,19 +8,24 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from botocore.exceptions import ClientError
 
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
+
+import urllib.request
 import datetime
 import os
 import logging
 import boto3
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "client_secret.json"
+## consider when doctor or patient deleted, is dependent tables deleted as well
+## note we use flask session to store google credentials but ideally should be stored in the database
+
 
 #UPLOAD_FOLDER = 'http://s3.amazonaws.com/patientdoc/'
 
 
 api = Blueprint('api', __name__)
-
-
+from main import credentials_to_dict
 
 
 @api.before_request
@@ -31,7 +36,8 @@ def before_request_func():
   
 @api.route('/')
 def index():    
-
+    for key,value in session['credentials'].items():
+        print(key,value)
     user=None
     fields_med_rec=None
     if current_user.is_authenticated:
@@ -127,6 +133,9 @@ def signup():
             Bucket='bpspatientdoc123',
             Key=user_img
         )
+
+        ##create a cached copy
+        user_img_file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], user_img))
         
         '''
         if type=='physician':         
@@ -203,7 +212,17 @@ def profile():
 
     update=request.args.get('update')
     if request.method == 'GET' :
-        return render_template('/main_layout/profile.html', title="Profile", basic=basic, extra=extra, user=user, update=update )
+
+         ##Retrieve from cache if exists; else get from AWS and store in cache
+        img_path= os.path.join(current_app.config['UPLOAD_FOLDER'], user.img)
+        if not os.path.exists(img_path):
+            img_aws = 'https://bpspatientdoc123.s3-us-west-1.amazonaws.com/'+user.img
+            urllib.request.urlretrieve(img_aws,img_path)
+            
+        #shorten url before placing on html file
+        img_path=os.path.relpath(img_path,'./static/')
+
+        return render_template('/main_layout/profile.html', title="Profile", basic=basic, extra=extra, user=user, update=update, img_path=img_path )
 
 
     else: ## request.method == 'POST' for Updating profile:
@@ -334,9 +353,19 @@ def medical_record(id):
             user_type='physician'
             med_record = Med_Record.query.filter_by(patient_id=id).first()
         if med_record is None:            
-            return redirect(url_for('.unauthorized',id=id))   
+            return redirect(url_for('.unauthorized'))   
+
+        ##Retrieve from cache if exists; else get from AWS and store in cache
+
+        img_path= os.path.join(current_app.config['UPLOAD_FOLDER'], med_record.patient.img)
+        if not os.path.exists(img_path):
+            img_aws = 'https://bpspatientdoc123.s3-us-west-1.amazonaws.com/'+med_record.patient.img
+            urllib.request.urlretrieve(img_aws,img_path)
+
+        #shorten url before placing on html file
+        img_path=os.path.relpath(img_path,'./static/')
         
-        return render_template('/main_layout/medical_record.html',med_record=med_record,user_type=user_type, med_rec_problem=med_rec_problem, med_rec_treatment=med_rec_treatment) 
+        return render_template('/main_layout/medical_record.html',med_record=med_record,user_type=user_type, med_rec_problem=med_rec_problem, med_rec_treatment=med_rec_treatment, img_path=img_path) 
     
     ##we now consider the Post cases
 
@@ -395,12 +424,18 @@ def medical_record(id):
 
     return redirect(url_for('.medical_record', id=id))
 
+
     
 ## We will use query parameters to achieve Retrieval for various appointments for a user
 @api.route('/appointments', methods=['GET','POST'])
 @login_required
 def appointments():
-    
+    ## to check what to display in html
+    connect=False
+    if 'credentials' in session:
+        connect=True
+        
+       
     booking = Booking()
   
     if booking.validate_on_submit(): ##create new appointment
@@ -421,12 +456,48 @@ def appointments():
         ## only a patient can set an appointment
         if current_user.type=='patient' and physician_id:
             appointment = Appointment(physician_id=physician_id, patient_id=current_user.id, date = date)
-            release_form = Release_Form(physician_id=physician_id, patient_id=current_user.id)       #when create an appointent you must sign release form
             db.session.add(appointment)
-            db.session.add(release_form)
+            if not Release_Form.query.filter_by(physician_id=physician_id, patient_id=current_user.id):
+                release_form = Release_Form(physician_id=physician_id, patient_id=current_user.id)       #when create an appointent you must sign release form
+                db.session.add(release_form)          
+            
             db.session.commit()
             flash(f"Appointment has been set to {data['date']}")
+
+            ##better to be done  in a different class
+            if 'credentials' in session:    
+                credentials = Credentials(**session['credentials'])     
+                                         
+                service = build('calendar', 'v3', credentials=credentials)
             
+                ## we now make the entry in google calendar
+                event = {
+                    'id':'patientdoc'+str(appointment.id),
+                    'summary': 'Medical Appointment',   
+                    'description': 'Your medical appointment has been organized.', 
+                    'start': {
+                        'dateTime': appointment.date.strftime("%Y-%m-%dT%H:%M:%S-04:00"),
+                    },
+                    'end': {
+                        'dateTime': (appointment.date+datetime.timedelta(minutes=30)).strftime("%Y-%m-%dT%H:%M:%S-04:00"),
+                    },
+                
+                    'attendees': [
+                        {'email': appointment.patient.email},
+                        {'email': appointment.physician.email},
+                    ],
+                    'reminders': {
+                        'useDefault': False,
+                        'overrides': [
+                        {'method': 'email', 'minutes': 24 * 60},
+                        {'method': 'popup', 'minutes': 10},
+                        ],
+                    },
+                }
+                event = service.events().insert(calendarId='primary', body=event).execute()
+                print ('Event created: %s' % (event.get('htmlLink')))
+                session['credentials'] = credentials_to_dict(credentials) ##update credentials
+
         elif current_user.type=='patient':
             flash('Cannot set an Appointment. There is no physician registered with that email.')
         else:
@@ -437,7 +508,7 @@ def appointments():
         return redirect(url_for('.appointments'))
 
     else: ## get appointments based on query params
-        update=request.args.get('update') ## store if update was requeted
+        update_id=request.args.get('update_id') ## store if update was requeted
 
         date = request.args.get('date') 
         valid_date=False
@@ -483,8 +554,8 @@ def appointments():
         ## just let user know
         if date is not None and valid_date == False:
             flash("You have not provided an invalid date with format YY-MM-DD in the url. We have returned results for all appointments.")    
-
-        return render_template('/listing_layout/appointment_list.html',appointments=appointments, update=update, booking=booking)
+        
+        return render_template('/listing_layout/appointment_list.html',appointments=appointments, update_id=update_id, booking=booking, connect=connect)
 
 
 ## Besides viewing, a patient can change and delete appointments; whereas, a physician can only  change appoinments
@@ -492,13 +563,22 @@ def appointments():
 @api.route('/appointments/<id>', methods=['GET','POST'])
 @login_required
 def appointment(id):    
+    connect=False
+    if 'credentials' in session:
+        connect=True
+
     if current_user.type == 'patient':
         appointment = Appointment.query.filter_by(patient_id = current_user.id,id=id).first()
     else:
         appointment = Appointment.query.filter_by(physician_id = current_user.id,id=id).first()
 
     if appointment:    
-        ##change appointment
+        ## we first get a service object to make changes to google calendar
+        if 'credentials' in session:                
+            credentials = Credentials(**session['credentials'])            
+            service = build('calendar', 'v3', credentials=credentials)
+
+        ##if change appointment
         if request.method == 'POST':
             
             data = request.form  
@@ -511,6 +591,26 @@ def appointment(id):
                 db.session.add(appointment)
                 db.session.commit()
                 flash(f"Appointment has been rescheduled to {data['date']}")
+
+                if 'credentials' in session:  
+                    ## we now update google calendar if user said to sync         
+                    ##this perhaps is not the best way to do it. Rather need to figure out if an event exists via eventID     
+                    try:
+                        event = service.events().get(calendarId='primary', eventId='patientdoc'+str(appointment.id)).execute()
+                    
+                        event['start'] = {
+                            'dateTime': appointment.date.strftime("%Y-%m-%dT%H:%M:%S-04:00"),
+                        }
+                        event['end'] = {
+                            'dateTime': (appointment.date+datetime.timedelta(minutes=30)).strftime("%Y-%m-%dT%H:%M:%S-04:00"),
+                        }
+                        updated_event = service.events().update(calendarId='primary', eventId='patientdoc'+str(appointment.id), body=event).execute()
+                        # Print the updated date.
+                        print (updated_event['updated'])
+                    except:
+                        print("Nothing to be updated on Google Calendar")
+                    session['credentials'] = credentials_to_dict(credentials) ##Update credentials
+
             else:
                 flash("Nothing to be updated.")
         else: ##if get request and argument say delete then
@@ -519,6 +619,18 @@ def appointment(id):
                 db.session.delete(appointment)
                 db.session.commit()
                 flash("Appointment has been cancelled.")
+
+                if 'credentials' in session:
+                    ##we now delete in google calendar
+                    ##this perhaps is not the best way to do it. Rather need to figure out if an event exists via eventID
+                    try:
+                        service.events().delete(calendarId='primary', eventId='patientdoc'+str(appointment.id)).execute()
+                        print ('deleted')
+                    except:
+                        print('nothing to delete on Google Calendar')
+                    
+                    session['credentials'] = credentials_to_dict(credentials)  ##update credentials
+
             elif delete=='True':
                 flash('Cannot delete an Appointment. You are not authorized to perform this action.')
                 return redirect(url_for('.unauthorized'))
