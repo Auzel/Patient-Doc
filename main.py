@@ -32,9 +32,10 @@ def load_user(user_id):
 
 def create_app():
     app = Flask(__name__, static_url_path='')
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://b4ab06921840a3:995a5935@us-cdbr-iron-east-01.cleardb.net/heroku_b2abbb44d079db0'
+    #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://b4ab06921840a3:995a5935@us-cdbr-iron-east-01.cleardb.net/heroku_b2abbb44d079db0'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://Q9yYmYvbhjDtgY2R:WJ53xikaY3y5jMNNixNq@database-patient-doc.coe5ekrasfr6.us-west-1.rds.amazonaws.com/Patient_Doc'
     #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://lmydpdllbtsznz:8d81daf81972e14e2cea72ba07dd5b6f76fd86289a744ae71880c4d9bdf13cf8@ec2-52-202-22-140.compute-1.amazonaws.com:5432/d5teel3845bir8'
-    app.config['SQLALCHEMY_POOL_RECYCLE'] = 299
+    #app.config['SQLALCHEMY_POOL_RECYCLE'] = 299
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     app.config['SECRET_KEY'] = 'P@T|nt-D0CT0R@App'    
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
