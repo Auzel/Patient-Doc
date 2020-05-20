@@ -19,15 +19,16 @@ List of Medical Institutions currently registered under Patient-Doc:
 
 
 {% block table_body %}
-
-    {% for med_institution in med_institutions %}
-        <tr id="change"> 
-            <th scope=row>{{med_institution.id}}</th> 
-            <td>{{med_institution.name}} </td> 
-            <td>{{med_institution.address}}</td>
-            <td>{{med_institution.contact_no}} </td>
-        </tr> 
-    {% endfor %}
+    {%if med_institution%}
+        {% for med_institution in med_institutions %}
+            <tr id="change"> 
+                <th scope=row>{{med_institution.id}}</th> 
+                <td>{{med_institution.name}} </td> 
+                <td>{{med_institution.address}}</td>
+                <td>{{med_institution.contact_no}} </td>
+            </tr> 
+        {% endfor %}
+    {%endif%}
 {% endblock %}
 
 
