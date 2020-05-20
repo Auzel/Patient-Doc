@@ -59,13 +59,11 @@ class Booking(FlaskForm):
         timeformat = "%H:%M"
         try:
             validtime = datetime.datetime.strptime((str(field.data))[:5], timeformat)      #come back and only allow selection every half hour
-        except ValueError:
-            print("here")
+        except ValueError:           
             raise ValidationError("Invalid time chosen.")
 
     def validate_date(form, field):
-        if field.data < datetime.datetime.now().date():
-            print("here2")
+        if field.data < datetime.datetime.now().date():            
             raise ValidationError("Cannot set an appointment to before today's date")
 
 

@@ -35,9 +35,7 @@ def before_request_func():
         return redirect(url_for('.index'))
   
 @api.route('/')
-def index():    
-    for key,value in session['credentials'].items():
-        print(key,value)
+def index():        
     user=None
     fields_med_rec=None
     if current_user.is_authenticated:
