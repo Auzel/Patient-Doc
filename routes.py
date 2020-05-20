@@ -41,7 +41,7 @@ def before_request_func():
 def index():   
     print("is authenticated ",current_user.is_authenticated)
     sys.stdout.flush() 
-    if current_user.is_authenticated:
+    if current_user.is_authenticated and current_user.type=='patient':
         if current_user.med_record:
             print("have record")
             sys.stdout.flush() 
