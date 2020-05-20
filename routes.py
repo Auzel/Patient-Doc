@@ -35,7 +35,8 @@ def before_request_func():
         return redirect(url_for('.index'))
   
 @api.route('/')
-def index():        
+def index():     
+       
     user=None
     fields_med_rec=None
     if current_user.is_authenticated:
