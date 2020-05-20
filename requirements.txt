@@ -15,8 +15,8 @@ mysqlclient==1.4.6
 Flask-Login == 0.5.0
 #Flask-OAuth == 0.12
 #Flask-OAuthlib == 0.9.5
-boto3==1.13.11
 awscli == 1.18.63
+boto3==1.13.13
 google-api-python-client == 1.8.3
 google-auth-httplib2 == 0.0.3
 google-auth-oauthlib == 0.4.1
