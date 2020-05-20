@@ -32,7 +32,7 @@ api = Blueprint('api', __name__)
 @api.before_request
 def before_request_func():
    
-    if (not ( (request.method=='POST' and request.endpoint=="api.medical_record") or  ( request.endpoint == 'api.index') ) ) and (current_user.is_authenticated and current_user.type=='patient' and not current_user.med_record):
+    if (not ( (request.method=='POST' and request.endpoint=="api.medical_record") or  ( request.endpoint == 'api.index') ) ) and (current_user.is_authenticated and current_user.type=='patient' and not Med_Record.query.filter_by(patient_id=current_user.id).first()):
         return redirect(url_for('.index'))
 
 
@@ -42,14 +42,14 @@ def index():
     print("is authenticated ",current_user.is_authenticated)
     sys.stdout.flush() 
     if current_user.is_authenticated and current_user.type=='patient':
-        if current_user.med_record:
+        if Med_Record.query.filter_by(patient_id=current_user.id).first():
             print("have record")
             sys.stdout.flush() 
     user=None
     fields_med_rec=None
     if current_user.is_authenticated:
         user=current_user
-        if user.type=='patient' and not user.med_record:
+        if user.type=='patient' and not Med_Record.query.filter_by(patient_id=user.id).first():
             fields_med_rec = Med_Record_SetUp()
 
     return render_template('/main_layout/home.html', user=user,  title="Home", fields_med_rec=fields_med_rec) 
