@@ -27,16 +27,17 @@ import boto3
 api = Blueprint('api', __name__)
 
 
-
+'''
 @api.before_request
 def before_request_func():
    
     if (not ( (request.method=='POST' and request.endpoint=="api.medical_record") or  ( request.endpoint == 'api.index') ) ) and (current_user.is_authenticated and current_user.type=='patient' and not current_user.med_record):
         return redirect(url_for('.index'))
-  
+
+'''
+ 
 @api.route('/')
 def index():     
-   
     user=None
     fields_med_rec=None
     if current_user.is_authenticated:
