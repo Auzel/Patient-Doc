@@ -224,8 +224,9 @@ def profile():
             urllib.request.urlretrieve(img_aws,img_path)
             
         #shorten url before placing on html file
-        img_path=os.path.relpath(img_path,'./static/')
 
+        img_path=os.path.relpath(img_path,'./static/')
+       
         return render_template('/main_layout/profile.html', title="Profile", basic=basic, extra=extra, user=user, update=update, img_path=img_path )
 
 
