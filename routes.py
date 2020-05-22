@@ -122,9 +122,6 @@ def signup():
 
         ##We don't store picture til we know we have succesffuly added user to db 
         
-        ##create a cached copy
-        ##user_img_file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], user_img))
-
         ##Now we persist the copy to AWS
 
         ##connect to AWS
@@ -135,7 +132,6 @@ def signup():
         )
        
         ##store file in AWS
-        ##user_img_file = open(os.path.join(current_app.config['UPLOAD_FOLDER'], user_img),'rb')
 
         response = client.put_object(
             ACL='public-read',
@@ -144,8 +140,10 @@ def signup():
             Key=user_img
         )
 
-        ##user_img_file.close() 
-        
+        ##create a cached copy from AWS. Ideally, preferred to save cached copy from file before upload to AWS. But it was giving trouble on mobile for heroku
+        img_path= os.path.join(current_app.config['UPLOAD_FOLDER'], user.img)        
+        img_aws = 'https://bpspatientdoc123.s3-us-west-1.amazonaws.com/'+user.img
+        urllib.request.urlretrieve(img_aws,img_path)
         
         '''
         if type=='physician':         
