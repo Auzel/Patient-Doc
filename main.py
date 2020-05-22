@@ -23,6 +23,7 @@ UPLOAD_FOLDER = './static/img/user_uploads'
 
 ''' Begin Boilerplate Code '''
 
+
 ''' Begin Flask Login Functions '''
 login_manager = LoginManager()
 @login_manager.user_loader

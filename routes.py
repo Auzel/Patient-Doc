@@ -123,7 +123,7 @@ def signup():
         ##We don't store picture til we know we have succesffuly added user to db 
 
         ##create a cached copy
-        user_img_file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], user_img))
+        #user_img_file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], user_img))
 
         ##Now we persist the copy to AWS
 
