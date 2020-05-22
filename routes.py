@@ -121,9 +121,9 @@ def signup():
             return redirect(url_for('.signup'))
 
         ##We don't store picture til we know we have succesffuly added user to db 
-        '''
+        
         ##create a cached copy
-        user_img_file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], user_img))
+        ##user_img_file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], user_img))
 
         ##Now we persist the copy to AWS
 
@@ -135,7 +135,7 @@ def signup():
         )
        
         ##store file in AWS
-        user_img_file = open(os.path.join(current_app.config['UPLOAD_FOLDER'], user_img),'rb')
+        ##user_img_file = open(os.path.join(current_app.config['UPLOAD_FOLDER'], user_img),'rb')
 
         response = client.put_object(
             ACL='public-read',
@@ -144,8 +144,8 @@ def signup():
             Key=user_img
         )
 
-        user_img_file.close() 
-        '''
+        ##user_img_file.close() 
+        
         
         '''
         if type=='physician':         
