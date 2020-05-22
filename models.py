@@ -76,9 +76,9 @@ class Patient(User):
 class Physician(User):
     ##__tablename__='physician'
 
-    type1= db.Column(db.String(20), nullable=False)
-    degree=db.Column(db.String(20), nullable=False)
-    place_of_education=db.Column(db.String(20), nullable=False)
+    type1= db.Column(db.String(20))
+    degree=db.Column(db.String(20))
+    place_of_education=db.Column(db.String(20))
     #license = db.Column(db.String(20), nullable=False)
     med_id=db.Column(db.Integer, db.ForeignKey('med_institution.id'))
     releases=db.relationship('Release_Form', foreign_keys="Release_Form.physician_id", backref='physician', lazy=True)    
