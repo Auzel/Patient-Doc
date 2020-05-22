@@ -75,10 +75,10 @@
                                 <p>{{basic.DOB.label}}: {{user.date_of_birth.strftime("%d-%B-%Y")}}</p>
                                 <p>{{basic.address.label}}:  {{user.address}}</p>
                                 {% if user.type == 'physician' %}                   
-                                    <p>{{extra.physician_type.label}}: {{user.physician_type}}</p>
+                                    <p>{{extra.physician_type.label}}: {{user.type1}}</p>
                                     <p>{{extra.degree.label}}: {{user.degree}}</p>
                                     <p>{{extra.place_of_education.label}}: {{user.place_of_education}}</p>                                    
-                                    <p>{{extra.med_key.label}}: {{user.med_key}}</p>
+                                    <!-- <p>{{extra.med_key.label}}: {{user.med_key}}</p> -->
                                 {% endif %}
                             {% else %} 
                                 <form action="/profile" method="POST"> 
@@ -127,7 +127,7 @@
                                     </ul>
 
                                     {% if user.type == 'physician' %}                   
-                                        <p>{{extra.physician_type.label}}: {{extra.physician_type(value=user.physician_type)}}</p>
+                                        <p>{{extra.physician_type.label}}: {{extra.physician_type(value=user.type1)}}</p>
                                         <ul>
                                             {% for error in extra.physician_type.errors %}
                                                 <li>{{ error }}</li>
@@ -147,14 +147,14 @@
                                                 <li>{{ error }}</li>
                                             {% endfor %}
                                         </ul>
-
+                                        <!--
                                         <p>{{extra.med_key.label}}: {{extra.med_key(value=user.med_key)}}</p>
                                         <ul>
                                             {% for error in extra.med_key.errors %}
                                                 <li>{{ error }}</li>
                                             {% endfor %}
                                         </ul>
-
+                                        -->
                                     {% endif %}
                                     <input type="submit" value="save" class="btn btn-success btn-block">
                                 </form>

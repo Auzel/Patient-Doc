@@ -82,13 +82,13 @@ def signup():
         
         DOB = datetime.datetime.strptime(data['DOB'],"%Y-%m-%d")
 
-
         
         ##get user image and determine filename
         user_img_file = request.files['user_img']   
 
-        #create new file name to be unique on AWS 
-        user_img=data['email']+"_img"+"."+user_img_file.filename.rsplit('.', 1)[1].lower()           
+        #create new filename to be unique on AWS 
+        user_img=data['email']+"_img"+"."+user_img_file.filename.rsplit('.', 1)[1].lower()   
+              
         
         if type=='patient':
             user = Patient(fname = fname, lname=lname, email=data['email'], address=data['address'], date_of_birth=DOB, img=user_img)
@@ -120,16 +120,22 @@ def signup():
             flash('Email already exists')
             return redirect(url_for('.signup'))
 
-        ##We don't store to AWS til we know we have succesffuly added user to db 
-     
+        ##We don't store picture til we know we have succesffuly added user to db 
+
+        ##create a cached copy
+        user_img_file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], user_img))
+
+        ##Now we persist the copy to AWS
+
         ##connect to AWS
         client = boto3.client(
             's3',               
             aws_access_key_id=f"{os.environ['AWS_ACCESS_KEY_ID']}",
             aws_secret_access_key=f"{os.environ['AWS_SECRET_ACCESS_KEY']}"
         )
-
-        
+       
+        ##store file in AWS
+        user_img_file = open(os.path.join(current_app.config['UPLOAD_FOLDER'], user_img),'rb')
 
         response = client.put_object(
             ACL='public-read',
@@ -138,8 +144,7 @@ def signup():
             Key=user_img
         )
 
-        ##create a cached copy
-        user_img_file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], user_img))
+        user_img_file.close() 
         
         '''
         if type=='physician':         
@@ -217,17 +222,17 @@ def profile():
     update=request.args.get('update')
     if request.method == 'GET' :
 
-         ##Retrieve from cache if exists; else get from AWS and store in cache
+        ##Retrieve from cache if exists; else get from AWS and store in cache
+        
         img_path= os.path.join(current_app.config['UPLOAD_FOLDER'], user.img)
         if not os.path.exists(img_path):
             img_aws = 'https://bpspatientdoc123.s3-us-west-1.amazonaws.com/'+user.img
             urllib.request.urlretrieve(img_aws,img_path)
-            
-        #shorten url before placing on html file
 
         img_path=os.path.relpath(img_path,'./static/')
-       
-        return render_template('/main_layout/profile.html', title="Profile", basic=basic, extra=extra, user=user, update=update, img_path=img_path )
+
+        
+        return render_template('/main_layout/profile.html', title="Profile", basic=basic, extra=extra, user=user, update=update, img_path=img_path)
 
 
     else: ## request.method == 'POST' for Updating profile:
@@ -361,15 +366,16 @@ def medical_record(id):
             return redirect(url_for('.unauthorized'))   
 
         ##Retrieve from cache if exists; else get from AWS and store in cache
-
+        
         img_path= os.path.join(current_app.config['UPLOAD_FOLDER'], med_record.patient.img)
         if not os.path.exists(img_path):
             img_aws = 'https://bpspatientdoc123.s3-us-west-1.amazonaws.com/'+med_record.patient.img
             urllib.request.urlretrieve(img_aws,img_path)
 
         #shorten url before placing on html file
-        img_path=os.path.relpath(img_path,'./static/')
+        img_path=os.path.relpath(img_path,'./static/')  ##add img_path
         
+
         return render_template('/main_layout/medical_record.html',med_record=med_record,user_type=user_type, med_rec_problem=med_rec_problem, med_rec_treatment=med_rec_treatment, img_path=img_path) 
     
     ##we now consider the Post cases

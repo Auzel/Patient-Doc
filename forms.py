@@ -40,7 +40,7 @@ class Physician_SignUp(FlaskForm):
     degree=StringField('Degree', validators=[InputRequired("Please enter your degree."), validators.Length(max=20)])
     place_of_education=StringField('University', validators=[InputRequired("Please enter the institution where you received your degree."), validators.Length(max=20)])
     #license= FileField('License File' ,validators=[DataRequired("Please upload your license file.")] )
-    med_key = StringField('Medical Institution Key', validators=[InputRequired("Please enter the med ID assigned to your medical instutitions.")])
+    med_key = StringField('Medical Institution Key') ##validators=[InputRequired("Please enter the med ID assigned to your medical instutitions.")]
 
     '''
     def validate_license(form, field):

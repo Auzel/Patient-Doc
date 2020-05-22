@@ -28,7 +28,11 @@ If a user registers as a patient, he/she must input their medical records upon f
 ➢ Patients can only view their data and physicians can only view their patient’s data if access is granted. \
 ➢ Patients can give access to their medical records to another physician without having to re-write it each time. This access can be revoked by patients by deleting it in the release forms nav. \
 ➢ A physician can modify the medical record of a patient by adding a current treatment prescribed for their patient \
-➢ A patient can modify their medical record by updating their current problem. \
+➢ A patient can modify their medical record by updating their current problem. 
+
+# Note
+This version (v1) does not include the feature of mapping a physician to his/her medical instutition, although the infrastructure for such exists. \
+In the v2 release, however, your med-key would be required at signup and used to map to your medical institution.
 
 
 # Become a Member
