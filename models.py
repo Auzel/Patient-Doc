@@ -3,7 +3,7 @@ db = SQLAlchemy()
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
-from sqlalchemy.orm import backref
+
 
 ### comeback and update toDict methods to include relationships
 
@@ -62,9 +62,9 @@ class Patient(User):
     ##__tablename__='patient'
 
     
-    med_record = db.relationship('Med_Record', uselist=False, backref=backref('patient', passive_deletes=True))
-    releases = db.relationship('Release_Form', foreign_keys="Release_Form.patient_id", backref=backref('patient',passive_deletes=True) , lazy=True)    
-    appointments = db.relationship('Appointment', foreign_keys="Appointment.patient_id", backref=backref('patient',passive_deletes=True), lazy=True)
+    med_record = db.relationship('Med_Record', uselist=False, cascade="all,delete", backref='patient')
+    releases = db.relationship('Release_Form', foreign_keys="Release_Form.patient_id", cascade="all,delete", backref='patient', lazy=True)    
+    appointments = db.relationship('Appointment', foreign_keys="Appointment.patient_id", cascade="all,delete", backref='patient', lazy=True)
         
     __mapper_args__ = {
         'polymorphic_identity':'patient'
@@ -81,9 +81,9 @@ class Physician(User):
     degree=db.Column(db.String(20))
     place_of_education=db.Column(db.String(20))
     #license = db.Column(db.String(20), nullable=False)
-    med_id=db.Column(db.Integer, db.ForeignKey('med_institution.id', ondelete='CASCADE'))
-    releases=db.relationship('Release_Form', foreign_keys="Release_Form.physician_id", backref=backref('physician',passive_deletes=True), lazy=True)    
-    appointments = db.relationship('Appointment', foreign_keys="Appointment.physician_id", backref=backref('physician',passive_deletes=True), lazy=True)##, back_populates="physicians")
+    med_id=db.Column(db.Integer, db.ForeignKey('med_institution.id'))
+    releases=db.relationship('Release_Form', foreign_keys="Release_Form.physician_id", cascade="all,delete", backref='physician', lazy=True)    
+    appointments = db.relationship('Appointment', foreign_keys="Appointment.physician_id", cascade="all,delete", backref='physician', lazy=True)##, back_populates="physicians")
     
 
 
@@ -103,8 +103,8 @@ class Physician(User):
 
 class Appointment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    physician_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
-    patient_id = db.Column(db.Integer, db.ForeignKey('user.id',ondelete='CASCADE')) 
+    physician_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    patient_id = db.Column(db.Integer, db.ForeignKey('user.id')) 
     date=db.Column(db.DateTime, default=datetime.datetime.utcnow())    
     
     def toDict(self):
@@ -120,7 +120,7 @@ class Med_Institution(db.Model):
     name = db.Column(db.String(20), nullable=False)
     address = db.Column(db.String(50), nullable=False)
     contact_no = db.Column(db.String(15), nullable=False)    
-    physician = db.relationship('Physician', backref='med_institution', lazy=True)
+    physician = db.relationship('Physician', cascade="all,delete", backref='med_institution', lazy=True)
 
 
     def toDict(self):

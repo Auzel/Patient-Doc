@@ -23,7 +23,7 @@ google-auth-oauthlib == 0.4.1
 google-auth == 1.15.0
 setuptools == 46.4.0
 psycopg2 == 2.8.5
-PyMySQL == 0.9.3
+
 
 
 Authlib==0.14.1
