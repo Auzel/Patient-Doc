@@ -141,9 +141,9 @@ def signup():
         )
 
         ##create a cached copy from AWS. Ideally, preferred to save cached copy from file before upload to AWS. But it was giving trouble on mobile for heroku
-        img_path= os.path.join(current_app.config['UPLOAD_FOLDER'], user.img)        
-        img_aws = 'https://bpspatientdoc123.s3-us-west-1.amazonaws.com/'+user.img
-        urllib.request.urlretrieve(img_aws,img_path)
+        #img_path= os.path.join(current_app.config['UPLOAD_FOLDER'], user.img)        
+        #img_aws = 'https://bpspatientdoc123.s3-us-west-1.amazonaws.com/'+user.img
+        #urllib.request.urlretrieve(img_aws,img_path)
         
         '''
         if type=='physician':         
